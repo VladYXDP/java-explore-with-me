@@ -3,7 +3,6 @@ package ru.practicum.stat_svc.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.stat_svc.StatsDtoReq;
-import ru.practicum.stat_svc.StatsDtoResp;
 import ru.practicum.stat_svc.entity.Stats;
 import ru.practicum.stat_svc.repositiry.StatsRepository;
 
@@ -19,8 +18,13 @@ public class StatsService {
         statsRepository.save(hit);
     }
 
-    public StatsDtoResp getStats(StatsDtoReq statsReq) {
+    public List<Stats> getStats(StatsDtoReq statsDtoReq) {
         List<Stats> stats;
-        return null;
+        if (statsDtoReq.isUnique()) {
+            stats = statsRepository.getAll(statsDtoReq.getStart(), statsDtoReq.getEnd(), statsDtoReq.getUris());
+        } else {
+            stats = statsRepository.getStatsUnique(statsDtoReq.getStart(), statsDtoReq.getEnd(), statsDtoReq.getUris());
+        }
+        return stats;
     }
 }
