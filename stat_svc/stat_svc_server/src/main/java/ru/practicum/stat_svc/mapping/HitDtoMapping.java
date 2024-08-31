@@ -15,8 +15,4 @@ public class HitDtoMapping {
                 .timestamp(dto.getTimestamp())
                 .build();
     }
-
-    public HitDto hitDto(Stats stats) {
-        return new HitDto(stats.getId(), stats.getApp(), stats.getUri(), stats.getIp(), stats.getTimestamp());
-    }
 }
