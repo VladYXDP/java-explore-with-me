@@ -3,6 +3,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>ru.practicum.stat_svc</groupId>
+        <artifactId>stat_svc</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
     <name>stat_svc_client</name>
 
     <groupId>ru.practicum.stat_svc_client</groupId>
@@ -16,4 +22,16 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ru.practicum.stat_svc_dto</groupId>
+            <artifactId>stat_svc_dto</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>
