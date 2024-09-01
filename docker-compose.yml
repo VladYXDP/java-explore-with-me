@@ -10,9 +10,9 @@ services:
     environment:
       - STAT_SVC_SERVER=http://server:9090
   ewm-service:
-    build: ./ewm-server
-    image: ewm-server
-    container_name: ewm-server
+    build: ./ewm-service
+    image: ewm-service
+    container_name: ewm-service
     ports:
       - "8080:8080"
     environment:
