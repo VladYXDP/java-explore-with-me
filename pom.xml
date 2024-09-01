@@ -24,6 +24,7 @@
 
 	<modules>
 		<module>stat_svc</module>
+		<module>ewm-service</module>
 	</modules>
 
 	<build>

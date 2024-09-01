@@ -1,14 +1,36 @@
 services:
-  stats-server:
+  stat_svc_server:
+    build: stat_svc_server
+    image: stat_svc_server
+    container_name: stat_svc_server
     ports:
       - "9090:9090"
-
-  stats-db:
-    image: postgres:16.1
-
+    depends_on:
+      - db_stats
+    environment:
+      - STAT_SVC_SERVER=http://server:9090
   ewm-service:
+    build: ewm-service
+    image: ewm-service
+    container_name: ewm-service
     ports:
       - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
+      - SPRING_DATASOURCE_USERNAME=dbuser
+      - SPRING_DATASOURCE_PASSWORD=12345
 
-  ewm-db:
+  db_stats:
     image: postgres:16.1
+    container_name: explore-with-me
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=12345
+      - POSTGRES_USER=vlad
+      - POSTGRES_DB=stats
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
