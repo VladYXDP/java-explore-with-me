@@ -1,6 +1,6 @@
 FROM amazoncorretto:21-alpine as builder
 WORKDIR application
-COPY target/*.jar stat_svc_service.jar
+COPY target/*.jar stat_svc_server.jar
 RUN java -Djarmode=layertools -jar /stat_svc_server.jar extract
 
 FROM amazoncorretto:21-alpine
