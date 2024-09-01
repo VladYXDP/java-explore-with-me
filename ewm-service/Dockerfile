@@ -1,6 +1,6 @@
 FROM amazoncorretto:21-alpine as builder
 WORKDIR application
-COPY target/*.jar app.jar
+COPY target/*.jar ewn-service.jar
 RUN java -Djarmode=layertools -jar app.jar extract
 
 FROM amazoncorretto:21-alpine
