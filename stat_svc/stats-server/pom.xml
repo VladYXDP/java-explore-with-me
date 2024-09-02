@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>stat_svc_server</name>
+    <name>stats-server</name>
 
     <parent>
         <groupId>ru.practicum</groupId>
@@ -11,8 +11,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>ru.practicum</groupId>
-    <artifactId>stat_svc_server</artifactId>
+    <artifactId>stats-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 

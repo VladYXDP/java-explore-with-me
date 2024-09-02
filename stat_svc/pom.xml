@@ -16,7 +16,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>stat_svc_server</module>
+        <module>stats-server</module>
         <module>stat_svc_client</module>
         <module>stat_svc_dto</module>
     </modules>
