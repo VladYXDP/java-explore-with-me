@@ -1,18 +1,16 @@
 services:
   stat_svc_server:
     build: stat_svc_server
-    image: stat_svc_server
-    container_name: stat_svc_server
+    image: stat_svc_server_image
+    container_name: stat_svc_server_name
     ports:
       - "9090:9090"
     depends_on:
       - db
-    environment:
-      - STAT_SVC_SERVER=http://server:9090
   ewm-service:
     build: ewm-service
-    image: ewm-service
-    container_name: ewm-service
+    image: ewm-service_image
+    container_name: ewm-service_name
     ports:
       - "8080:8080"
     environment:
@@ -22,7 +20,7 @@ services:
 
   db:
     image: postgres:16.1
-    container_name: explore-with-me
+    container_name: db-container
     ports:
       - "5432:5432"
     environment:
