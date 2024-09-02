@@ -1,11 +1,3 @@
-FROM amazoncorretto:21-alpine as builder
-WORKDIR application
-COPY target/*.jar ewn-service.jar
-RUN java -Djarmode=layertools -jar ewm-service.jar extract
-
-FROM amazoncorretto:21-alpine
-COPY --from=builder /application/dependencies/ ./
-COPY --from=builder /application/spring-boot-loader/ ./
-COPY --from=builder /application/snapshot-dependencies/ ./
-COPY --from=builder /application/application ./
-ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
+FROM amazoncorretto:11
+COPY target/*.jar ewm-service.jar
+ENTRYPOINT ["java", "-jar", "/ewm-service.jar"]
