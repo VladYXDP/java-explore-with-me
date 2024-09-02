@@ -55,7 +55,7 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>ru.practicum.stat_svc_client</groupId>
+            <groupId>ru.practicum</groupId>
             <artifactId>stat_svc_client</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>

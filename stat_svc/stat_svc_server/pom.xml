@@ -6,12 +6,12 @@
     <name>stat_svc_server</name>
 
     <parent>
-        <groupId>ru.practicum.stat_svc</groupId>
+        <groupId>ru.practicum</groupId>
         <artifactId>stat_svc</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>ru.practicum.stat_svc_server</groupId>
+    <groupId>ru.practicum</groupId>
     <artifactId>stat_svc_server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -55,7 +55,7 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>ru.practicum.stat_svc_dto</groupId>
+            <groupId>ru.practicum</groupId>
             <artifactId>stat_svc_dto</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
