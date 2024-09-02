@@ -1,6 +1,6 @@
 services:
   stat_svc_server:
-    build: ./stat_svc/stat_svc_server
+    build: stat_svc_server
     image: stat_svc_server
     container_name: stat_svc_server
     ports:
@@ -10,7 +10,7 @@ services:
     environment:
       - STAT_SVC_SERVER=http://server:9090
   ewm-service:
-    build: ./ewm-service
+    build: ewm-service
     image: ewm-service
     container_name: ewm-service
     ports:
