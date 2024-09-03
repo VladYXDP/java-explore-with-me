@@ -8,14 +8,14 @@ services:
     depends_on:
       - stats-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/explore-with-me
   stats-db:
     image: postgres:16.1
     container_name: db-container
     ports:
       - "6542:5432"
     environment:
-      - POSTGRES_DB=stats
+      - POSTGRES_DB=explore-with-me
       - POSTGRES_PASSWORD=12345
       - POSTGRES_USER=vlad
     healthcheck:
@@ -34,13 +34,13 @@ services:
       - stats-server
     environment:
       - CLIENT_URL=http://stats-server:9090
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/explore-with-me
   ewm-db:
     image: postgres:14-alpine
     container_name: postgres-ewm-db-container
     ports:
       - "6541:5432"
     environment:
-      - POSTGRES_DB=ewm
+      - POSTGRES_DB=explore-with-me
       - POSTGRES_USER=vlad
       - POSTGRES_PASSWORD=12345
