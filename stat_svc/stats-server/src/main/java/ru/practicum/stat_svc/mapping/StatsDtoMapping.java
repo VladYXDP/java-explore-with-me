@@ -10,10 +10,10 @@ import java.util.Arrays;
 @Component
 public class StatsDtoMapping {
 
-    public StatsDtoReq toStatsDtoReq(String start, String end, String uris, Boolean unique) {
+    public StatsDtoReq toStatsDtoReq(LocalDateTime start, LocalDateTime end, String uris, Boolean unique) {
         return StatsDtoReq.builder()
-                .start(LocalDateTime.parse(start))
-                .end(LocalDateTime.parse(end))
+                .start(start)
+                .end(end)
                 .uris(new ArrayList<>(Arrays.asList(uris.split(","))))
                 .unique(unique)
                 .build();
