@@ -2,11 +2,11 @@ package ru.practicum.stat_svc.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.stat_svc.StatsDtoReq;
 import ru.practicum.stat_svc.ViewStats;
 import ru.practicum.stat_svc.entity.Stats;
 import ru.practicum.stat_svc.repositiry.StatsRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -19,13 +19,17 @@ public class StatsService {
         statsRepository.save(hit);
     }
 
-    public List<ViewStats> getStats(StatsDtoReq statsDtoReq) {
-        List<ViewStats> stats;
-        if (!statsDtoReq.isUnique()) {
-            stats = statsRepository.getAll(statsDtoReq.getStart(), statsDtoReq.getEnd(), statsDtoReq.getUris());
+    public List<ViewStats> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
+        if (unique) {
+            if (uris != null) {
+                return statsRepository.findHitsWithUniqueIpWithUris(uris, start, end);
+            }
+            return statsRepository.findHitsWithUniqueIpWithoutUris(start, end);
         } else {
-            stats = statsRepository.getStatsUnique(statsDtoReq.getStart(), statsDtoReq.getEnd(), statsDtoReq.getUris());
+            if (uris != null) {
+                return statsRepository.findAllHitsWithUris(uris, start, end);
+            }
+            return statsRepository.findAllHitsWithoutUris(start, end);
         }
-        return stats;
     }
 }

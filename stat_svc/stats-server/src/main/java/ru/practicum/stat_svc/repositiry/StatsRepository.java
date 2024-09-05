@@ -2,7 +2,6 @@ package ru.practicum.stat_svc.repositiry;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.stat_svc.ViewStats;
 import ru.practicum.stat_svc.entity.Stats;
 
@@ -11,20 +10,31 @@ import java.util.List;
 
 public interface StatsRepository extends JpaRepository<Stats, Long> {
 
-    @Query(value = "SELECT new ru.practicum.stat_svc.ViewStats(s.app, s.uri, count(s.ip)) " +
-            "FROM Stats AS s " +
-            "WHERE timestamp BETWEEN ?1 AND ?2 " +
-            "GROUP BY s.app, s.uri " +
-            "ORDER BY count(s.ip) DESC")
-    @Transactional
-    List<ViewStats> getAll(LocalDateTime start, LocalDateTime end, List<String> uris);
+    @Query("SELECT new ru.practicum.stat_svc.ViewStats(h.app, h.uri, COUNT(DISTINCT h.ip)) " +
+            "FROM Stats AS h " +
+            "WHERE h.timestamp BETWEEN ?1 AND ?2 " +
+            "GROUP BY h.app, h.uri " +
+            "ORDER BY COUNT(DISTINCT h.ip) DESC")
+    List<ViewStats> findHitsWithUniqueIpWithoutUris(LocalDateTime start, LocalDateTime end);
 
-    @Query(value = "SELECT new ru.practicum.stat_svc.ViewStats(s.app, s.uri, count(DISTINCT s.ip)) " +
-            "FROM Stats AS s " +
-            "WHERE timestamp BETWEEN ?1 AND ?2 " +
-            "AND s.uri in ?3 " +
-            "GROUP BY s.app, s.uri " +
-            "ORDER BY count(s.ip) DESC")
-    @Transactional(readOnly = true)
-    List<ViewStats> getStatsUnique(LocalDateTime start, LocalDateTime end, List<String> uris);
+    @Query("SELECT new ru.practicum.stat_svc.ViewStats(h.app, h.uri, COUNT(DISTINCT h.ip)) " +
+            "FROM Stats AS h " +
+            "WHERE h.uri IN (?1) AND h.timestamp BETWEEN ?2 AND ?3 " +
+            "GROUP BY h.app, h.uri " +
+            "ORDER BY COUNT(DISTINCT h.ip) DESC")
+    List<ViewStats> findHitsWithUniqueIpWithUris(List<String> uris, LocalDateTime start, LocalDateTime end);
+
+    @Query("SELECT new ru.practicum.stat_svc.ViewStats(h.app, h.uri, COUNT(h.uri)) " +
+            "FROM Stats AS h " +
+            "WHERE h.timestamp BETWEEN ?1 AND ?2 " +
+            "GROUP BY h.app, h.uri " +
+            "ORDER BY COUNT (h.uri) DESC")
+    List<ViewStats> findAllHitsWithoutUris(LocalDateTime start, LocalDateTime end);
+
+    @Query("SELECT new ru.practicum.stat_svc.ViewStats(h.app, h.uri, COUNT(h.uri)) " +
+            "FROM Stats AS h " +
+            "WHERE h.uri IN (?1) AND h.timestamp BETWEEN ?2 AND ?3 " +
+            "GROUP BY h.app, h.uri " +
+            "ORDER BY COUNT (h.uri) DESC")
+    List<ViewStats> findAllHitsWithUris(List<String> uris, LocalDateTime start, LocalDateTime end);
 }

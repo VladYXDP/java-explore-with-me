@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.stat_svc.HitDto;
 import ru.practicum.stat_svc.ViewStats;
 import ru.practicum.stat_svc.mapping.HitDtoMapping;
-import ru.practicum.stat_svc.mapping.StatsDtoMapping;
 import ru.practicum.stat_svc.service.StatsService;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -20,7 +20,6 @@ public class StatsController {
 
     private final StatsService statService;
     private final HitDtoMapping hitDtoMapping;
-    private final StatsDtoMapping statsDtoMapping;
 
     @PostMapping("/hit")
     @ResponseStatus(HttpStatus.CREATED)
@@ -33,7 +32,6 @@ public class StatsController {
                                  @RequestParam(value = "end", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                  @RequestParam(value = "uris", required = false) String uris,
                                  @RequestParam(value = "unique", required = false, defaultValue = "false") Boolean unique) {
-        List<ViewStats> viewStats = statService.getStats(statsDtoMapping.toStatsDtoReq(start, end, uris, unique));
-        return viewStats;
+        return statService.getStats(start, end, Arrays.asList(uris.split(",")), unique);
     }
 }
