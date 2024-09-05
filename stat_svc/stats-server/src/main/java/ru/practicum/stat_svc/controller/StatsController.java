@@ -3,6 +3,7 @@ package ru.practicum.stat_svc.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.stat_svc.HitDto;
 import ru.practicum.stat_svc.ViewStats;
@@ -22,6 +23,7 @@ public class StatsController {
     private final StatsDtoMapping statsDtoMapping;
 
     @PostMapping("/hit")
+    @ResponseStatus(HttpStatus.CREATED)
     public void hit(@RequestBody @Valid HitDto body) {
         statService.addStats(hitDtoMapping.toStats(body));
     }
