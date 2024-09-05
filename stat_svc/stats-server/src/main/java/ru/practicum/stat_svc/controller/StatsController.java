@@ -11,7 +11,6 @@ import ru.practicum.stat_svc.mapping.HitDtoMapping;
 import ru.practicum.stat_svc.service.StatsService;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -30,8 +29,8 @@ public class StatsController {
     @GetMapping("/stats")
     public List<ViewStats> stats(@RequestParam(value = "start", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
                                  @RequestParam(value = "end", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
-                                 @RequestParam(value = "uris", required = false) String uris,
+                                 @RequestParam(value = "uris", required = false) List<String> uris,
                                  @RequestParam(value = "unique", required = false, defaultValue = "false") Boolean unique) {
-        return statService.getStats(start, end, Arrays.asList(uris.split(",")), unique);
+        return statService.getStats(start, end, uris, unique);
     }
 }
