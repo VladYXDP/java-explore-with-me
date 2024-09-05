@@ -21,7 +21,7 @@ public class HitDto {
     @NotBlank
     private String uri;
     @NotBlank
-    private String uip;
+    private String ip;
     @NotNull
     @Past
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
