@@ -1,9 +1,7 @@
 package ru.practicum.stat_svc;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,11 +14,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HitDto {
-    @NotBlank
+    @Size(min = 1, max = 100)
     private String app;
-    @NotBlank
+    @Size(min = 1, max = 100)
     private String uri;
-    @NotBlank
+    @Pattern(regexp = "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$")
     private String ip;
     @NotNull
     @Past
