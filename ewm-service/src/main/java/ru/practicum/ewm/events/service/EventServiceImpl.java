@@ -21,6 +21,11 @@ import ru.practicum.ewm.events.mapper.EventMapper;
 import ru.practicum.ewm.events.repository.EventRepository;
 import ru.practicum.ewm.exceptions.ForbiddenException;
 import ru.practicum.ewm.exceptions.NotFoundException;
+import ru.practicum.ewm.location.Location;
+import ru.practicum.ewm.location.LocationMapper;
+import ru.practicum.ewm.location.LocationRepository;
+import ru.practicum.ewm.requests.enums.RequestStatus;
+import ru.practicum.ewm.requests.repository.RequestRepository;
 import ru.practicum.ewm.users.entity.User;
 import ru.practicum.ewm.users.repository.UserRepository;
 import ru.practicum.stat_svc.StatsClient;
@@ -48,6 +53,8 @@ public class EventServiceImpl implements EventService {
     private final CategoryService categoryService;
     private final LocationRepository locationRepository;
     private final RequestRepository requestRepository;
+
+    private final LocationMapper locationMapper;
     private final StatsClient statsClient;
 
     @Value("${app}")
@@ -55,13 +62,13 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Event addEvent(Long userId, Event event) {
-        checkActualTime(event.getEventDate());
+        checkDate(event.getEventDate());
         User user = userRepository.findById(userId).orElseThrow(() ->
-                new NotFoundException("User with id=" + userId + " was not found"));
-        Long catId = event.getCategory();
+                new NotFoundException("Пользователь с id =" + userId + " не найден!"));
+        Long catId = event.getCategory().getId();
         Category category = categoriesRepository.findById(catId).orElseThrow(() ->
-                new NotFoundException("Category with id=" + catId + " was not found"));
-        Location location = checkLocation(LocationMapper.toLocation(event.getLocation()));
+                new NotFoundException("Категория с id=" + catId + " не найдена!"));
+        Location location = checkLocation(event.getLocation());
         event.setInitiator(user);
         event.setCategory(category);
         event.setLocation(location);
@@ -74,14 +81,14 @@ public class EventServiceImpl implements EventService {
     public Event updateEventByOwner(Long userId, Long eventId, Event event) {
         Event currentEvent = getEvent(eventId, userId);
         if (currentEvent.getState() == PUBLISHED) {
-            throw new ForbiddenException("Published events can't be update");
+            throw new ForbiddenException("Ошибка обновления события!");
         }
         String annotation = event.getAnnotation();
         if (annotation != null && !annotation.isBlank()) {
             currentEvent.setAnnotation(annotation);
         }
         if (event.getCategory() != null) {
-            currentEvent.setCategory(CategoryMapper.toCategory(categoryService.getCategoryById(event.getCategory())));
+            currentEvent.setCategory(event.getCategory());
         }
         String description = event.getDescription();
         if (description != null && !description.isBlank()) {
@@ -89,11 +96,11 @@ public class EventServiceImpl implements EventService {
         }
         LocalDateTime eventDate = event.getEventDate();
         if (eventDate != null) {
-            checkActualTime(eventDate);
+            checkDate(eventDate);
             currentEvent.setEventDate(eventDate);
         }
         if (event.getLocation() != null) {
-            Location location = checkLocation(LocationMapper.toLocation(event.getLocation()));
+            Location location = checkLocation(event.getLocation());
             currentEvent.setLocation(location);
         }
         if (event.getPaid() != null) {
@@ -109,16 +116,16 @@ public class EventServiceImpl implements EventService {
         if (title != null && !title.isBlank()) {
             currentEvent.setTitle(title);
         }
-        if (event.getStateAction() != null) {
-            StateActionPrivate stateActionPrivate = StateActionPrivate.valueOf(event.getStateAction());
+        if (event.getStateActionPrivate() != null) {
+            StateActionPrivate stateActionPrivate = StateActionPrivate.valueOf(event.getStateActionPrivate().name());
             if (stateActionPrivate.equals(SEND_TO_REVIEW)) {
                 currentEvent.setState(PENDING);
             } else if (stateActionPrivate.equals(CANCEL_REVIEW)) {
                 currentEvent.setState(State.CANCELED);
             }
         }
-        return EventMapper.toEventFullDto(eventRepository.save(currentEvent),
-                requestRepository.countByEventIdAndStatus(eventId, CONFIRMED));
+        currentEvent.setConfirmedRequest(requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED););
+        return eventRepository.save(currentEvent);
     }
 
     @Override
@@ -365,9 +372,9 @@ public class EventServiceImpl implements EventService {
         return result;
     }
 
-    protected void checkActualTime(LocalDateTime eventTime) {
+    protected void checkDate(LocalDateTime eventTime) {
         if (eventTime.isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new ValidationException("Incorrectly made request.");
+            throw new ValidationException("Неверная дата события!");
         }
     }
 

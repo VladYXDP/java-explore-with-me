@@ -3,6 +3,7 @@ package ru.practicum.ewm.requests.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import ru.practicum.ewm.requests.dto.ConfirmedRequestDto;
 import ru.practicum.ewm.requests.entity.Request;
 import ru.practicum.ewm.requests.enums.RequestStatus;
 
@@ -22,9 +23,9 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     long countByEventIdAndStatus(Long eventId, RequestStatus status);
 
-    @Query("SELECT new ru.practicum.ewm.requests.dto.ConfirmedRequests(COUNT(DISTINCT r.id), r.event.id) " +
+    @Query("SELECT new ru.practicum.ewm.requests.dto.ConfirmedRequestDto(COUNT(DISTINCT r.id), r.event.id) " +
             "FROM Request AS r " +
             "WHERE r.event.id IN (:ids) AND r.status = :status " +
             "GROUP BY (r.event)")
-    List<ConfirmedRequests> findAllByEventIdInAndStatus(@Param("ids")List<Long> ids, @Param("status")RequestStatus status);
+    List<ConfirmedRequestDto> findAllByEventIdInAndStatus(@Param("ids")List<Long> ids, @Param("status")RequestStatus status);
 }

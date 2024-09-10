@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import ru.practicum.ewm.categories.entity.Category;
 import ru.practicum.ewm.events.enums.State;
+import ru.practicum.ewm.events.enums.StateActionPrivate;
+import ru.practicum.ewm.location.Location;
 import ru.practicum.ewm.users.entity.User;
 
 import java.time.LocalDateTime;
@@ -62,4 +64,10 @@ public class Event {
 
     @Column(nullable = false)
     private String title;
+
+    @Transient
+    private Long confirmedRequest;
+
+    @Transient
+    private StateActionPrivate stateActionPrivate;
 }

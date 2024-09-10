@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.practicum.ewm.events.entity.Event;
 import ru.practicum.ewm.users.entity.User;
 
 import java.time.LocalDateTime;

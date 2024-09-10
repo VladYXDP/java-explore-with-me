@@ -3,13 +3,13 @@ package ru.practicum.ewm.events.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import ru.practicum.ewm.location.LocationDto;
 
 import java.time.LocalDateTime;
 
 @Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateEventDto {

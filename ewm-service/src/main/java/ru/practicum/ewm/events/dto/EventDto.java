@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.ewm.categories.dto.CategoryDto;
 import ru.practicum.ewm.events.enums.State;
+import ru.practicum.ewm.location.LocationDto;
 import ru.practicum.ewm.users.dto.UserShortDto;
 
 import java.time.LocalDateTime;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventFullDto {
+public class EventDto {
 
     private Long id;
     private String annotation;
@@ -32,7 +33,8 @@ public class EventFullDto {
     private Integer participantLimit;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishedOn;
-    private requestModeration;
+    private Boolean requestModeration;
     private State state;
     private String title;
+    private Long views;
 }
