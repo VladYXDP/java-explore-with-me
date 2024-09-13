@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class ConfirmedRequestDto {
-    private long count;
+    private Long count;
     private Long event;
 }

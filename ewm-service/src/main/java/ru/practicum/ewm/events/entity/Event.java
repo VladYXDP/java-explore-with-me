@@ -69,5 +69,11 @@ public class Event {
     private Long confirmedRequest;
 
     @Transient
+    private String stateAction;
+
+    @Transient
+    private Long views;
+
+    @Transient
     private StateActionPrivate stateActionPrivate;
 }
