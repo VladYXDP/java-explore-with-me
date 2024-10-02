@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.events.dto.CreateEventDto;
-import ru.practicum.ewm.events.dto.EventDto;
+import ru.practicum.ewm.events.dto.EventFullDto;
 import ru.practicum.ewm.events.dto.EventShortDto;
 import ru.practicum.ewm.events.mapper.EventMapper;
 import ru.practicum.ewm.events.service.EventService;
@@ -33,14 +33,14 @@ public class EventControllerPrivate {
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public EventDto addEvent(@PathVariable Long userId, @RequestBody @Valid CreateEventDto createEventDto) {
+    public EventFullDto addEvent(@PathVariable Long userId, @RequestBody @Valid CreateEventDto createEventDto) {
         return eventMapper.toEventDto(eventService.addEvent(userId, eventMapper.toEvent(createEventDto)));
     }
 
     @PatchMapping("/{eventId}")
-    public EventDto updateEventByOwner(@PathVariable Long userId,
-                                       @PathVariable Long eventId,
-                                       @RequestBody @Valid EventDto dto) {
+    public EventFullDto updateEventByOwner(@PathVariable Long userId,
+                                           @PathVariable Long eventId,
+                                           @RequestBody @Valid EventFullDto dto) {
         return eventMapper.toEventDto(eventService.updateEventByOwner(userId, eventId, eventMapper.toEvent(dto)));
     }
 
@@ -59,7 +59,7 @@ public class EventControllerPrivate {
     }
 
     @GetMapping("/{eventId}")
-    public EventDto getEventByOwner(@PathVariable Long userId, @PathVariable Long eventId) {
+    public EventFullDto getEventByOwner(@PathVariable Long userId, @PathVariable Long eventId) {
         return eventMapper.toEventDto(eventService.getEventByOwner(userId, eventId));
     }
 

@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.events.dto.CreateEventDto;
-import ru.practicum.ewm.events.dto.EventDto;
+import ru.practicum.ewm.events.dto.EventFullDto;
 import ru.practicum.ewm.events.mapper.EventMapper;
 import ru.practicum.ewm.events.service.EventService;
 
@@ -23,22 +23,22 @@ public class EventControllerAdmin {
     private final EventMapper eventMapper;
 
     @PatchMapping("/{eventId}")
-    public EventDto updateEventByAdmin(@PathVariable Long eventId,
-                                       @RequestBody @Valid CreateEventDto createEventDto) {
+    public EventFullDto updateEventByAdmin(@PathVariable Long eventId,
+                                           @RequestBody @Valid CreateEventDto createEventDto) {
         return eventMapper.toEventDto(eventService.updateEventByAdmin(eventId, eventMapper.toEvent(createEventDto)));
     }
 
     @GetMapping
-    public List<EventDto> getEventsByAdminParams(@RequestParam(required = false) List<Long> users,
-                                                              @RequestParam(required = false) List<String> states,
-                                                              @RequestParam(required = false) List<Long> categories,
-                                                              @RequestParam(required = false) @DateTimeFormat(pattern =
+    public List<EventFullDto> getEventsByAdminParams(@RequestParam(required = false) List<Long> users,
+                                                     @RequestParam(required = false) List<String> states,
+                                                     @RequestParam(required = false) List<Long> categories,
+                                                     @RequestParam(required = false) @DateTimeFormat(pattern =
                                                                       "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
-                                                              @RequestParam(required = false) @DateTimeFormat(pattern =
+                                                     @RequestParam(required = false) @DateTimeFormat(pattern =
                                                                       "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
-                                                              @RequestParam(value = "from", defaultValue = "0")
+                                                     @RequestParam(value = "from", defaultValue = "0")
                                                               @PositiveOrZero Integer from,
-                                                              @RequestParam(value = "size", defaultValue = "10")
+                                                     @RequestParam(value = "size", defaultValue = "10")
                                                               @Positive Integer size) {
         return eventMapper.toEventDto(eventService.getEventsByAdminParams(users, states, categories, rangeStart, rangeEnd, from, size));
     }

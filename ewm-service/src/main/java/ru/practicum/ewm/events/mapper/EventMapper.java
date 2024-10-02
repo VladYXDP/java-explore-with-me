@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.ewm.categories.mapper.CategoryMapper;
 import ru.practicum.ewm.events.dto.CreateEventDto;
-import ru.practicum.ewm.events.dto.EventDto;
+import ru.practicum.ewm.events.dto.EventFullDto;
 import ru.practicum.ewm.events.dto.EventShortDto;
 import ru.practicum.ewm.events.entity.Event;
 import ru.practicum.ewm.location.LocationMapper;
@@ -33,7 +33,7 @@ public class EventMapper {
                 .build();
     }
 
-    public Event toEvent(EventDto dto) {
+    public Event toEvent(EventFullDto dto) {
         return Event.builder()
                 .id(dto.getId())
                 .annotation(dto.getAnnotation())
@@ -47,12 +47,12 @@ public class EventMapper {
                 .build();
     }
 
-    public List<EventDto> toEventDto(List<Event> events) {
+    public List<EventFullDto> toEventDto(List<Event> events) {
         return events.stream().map(this::toEventDto).toList();
     }
 
-    public EventDto toEventDto(Event event) {
-        return EventDto.builder()
+    public EventFullDto toEventDto(Event event) {
+        return EventFullDto.builder()
                 .id(event.getId())
                 .annotation(event.getAnnotation())
                 .category(categoryMapper.toCategoryDto(event.getCategory()))
@@ -71,8 +71,8 @@ public class EventMapper {
                 .build();
     }
 
-    public EventDto toEventFullDtoWithViews(Event event, Long views, Long confirmedRequests) {
-        return EventDto.builder()
+    public EventFullDto toEventFullDtoWithViews(Event event, Long views, Long confirmedRequests) {
+        return EventFullDto.builder()
                 .id(event.getId())
                 .annotation(event.getAnnotation())
                 .category(categoryMapper.toCategoryDto(event.getCategory()))
