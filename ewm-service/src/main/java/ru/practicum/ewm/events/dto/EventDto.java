@@ -12,8 +12,8 @@ import ru.practicum.ewm.users.dto.UserShortDto;
 
 import java.time.LocalDateTime;
 
-@Builder
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class EventDto {

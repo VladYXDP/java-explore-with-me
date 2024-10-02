@@ -15,8 +15,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryControllerPublic {
 
-    private final CategoryService categoryService;
     private final CategoryMapper categoryMapper;
+    private final CategoryService categoryService;
 
     @GetMapping
     public List<CategoryDto> getCategories(@RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,

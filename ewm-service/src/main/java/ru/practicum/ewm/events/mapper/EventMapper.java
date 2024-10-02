@@ -20,16 +20,30 @@ public class EventMapper {
     private final CategoryMapper categoryMapper;
     private final LocationMapper locationMapper;
 
-    public Event toEvent(CreateEventDto createEventDto) {
+    public Event toEvent(CreateEventDto dto) {
         return Event.builder()
-                .annotation(createEventDto.getAnnotation())
-                .description(createEventDto.getDescription())
-                .eventDate(createEventDto.getEventDate())
-                .location(locationMapper.toLocation(createEventDto.getLocation()))
-                .paid(createEventDto.isPaid())
-                .participantLimit(createEventDto.getParticipantLimit())
-                .requestModeration(createEventDto.isRequestModeration())
-                .title(createEventDto.getTitle())
+                .annotation(dto.getAnnotation())
+                .description(dto.getDescription())
+                .eventDate(dto.getEventDate())
+                .location(locationMapper.toLocation(dto.getLocation()))
+                .paid(dto.isPaid())
+                .participantLimit(dto.getParticipantLimit())
+                .requestModeration(dto.isRequestModeration())
+                .title(dto.getTitle())
+                .build();
+    }
+
+    public Event toEvent(EventDto dto) {
+        return Event.builder()
+                .id(dto.getId())
+                .annotation(dto.getAnnotation())
+                .description(dto.getDescription())
+                .eventDate(dto.getEventDate())
+                .location(locationMapper.toLocation(dto.getLocation()))
+                .paid(dto.getPaid())
+                .participantLimit(dto.getParticipantLimit())
+                .requestModeration(dto.getRequestModeration())
+                .title(dto.getTitle())
                 .build();
     }
 
@@ -78,12 +92,16 @@ public class EventMapper {
                 .build();
     }
 
-    public EventShortDto toEventShortDto(Event event, Long confirmedRequests) {
+    public List<EventShortDto> toEventShortDto(List<Event> events) {
+        return events.stream().map(this::toEventShortDto).toList();
+    }
+
+    public EventShortDto toEventShortDto(Event event) {
         return EventShortDto.builder()
                 .id(event.getId())
                 .annotation(event.getAnnotation())
                 .category(categoryMapper.toCategoryDto(event.getCategory()))
-                .confirmedRequests(confirmedRequests)
+                .confirmedRequests(event.getConfirmedRequest())
                 .eventDate(event.getEventDate())
                 .initiator(userMapper.toUserShortDto(event.getInitiator()))
                 .paid(event.getPaid())

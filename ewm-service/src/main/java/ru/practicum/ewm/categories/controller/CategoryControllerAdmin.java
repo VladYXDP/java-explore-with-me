@@ -14,8 +14,8 @@ import ru.practicum.ewm.categories.service.CategoryService;
 @RequiredArgsConstructor
 public class CategoryControllerAdmin {
 
-    private final CategoryService categoryService;
     private final CategoryMapper categoryMapper;
+    private final CategoryService categoryService;
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
