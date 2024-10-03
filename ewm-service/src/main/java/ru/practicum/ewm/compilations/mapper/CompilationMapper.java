@@ -7,6 +7,8 @@ import ru.practicum.ewm.compilations.dto.CreateCompilationDto;
 import ru.practicum.ewm.compilations.entity.Compilation;
 import ru.practicum.ewm.events.mapper.EventMapper;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class CompilationMapper {
@@ -24,6 +26,10 @@ public class CompilationMapper {
         return new Compilation(
                 dto.getId(), dto.getTitle(), dto.getPinned(), eventMapper.toEvent(dto.getEvents())
         );
+    }
+
+    public List<CompilationDto> toCompilationDto(List<Compilation> compilation) {
+        return compilation.stream().map(this::toCompilationDto).toList();
     }
 
     public CompilationDto toCompilationDto(Compilation compilation) {
