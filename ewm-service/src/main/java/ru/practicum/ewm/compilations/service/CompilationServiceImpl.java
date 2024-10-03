@@ -13,7 +13,6 @@ import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.requests.entity.Request;
 import ru.practicum.ewm.requests.repository.RequestRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -72,7 +71,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional(readOnly = true)
     @Override
     public List<Compilation> getCompilations(Boolean pinned, Integer from, Integer size) {
-        List<Compilation> compilations = new ArrayList<>();
+        List<Compilation> compilations;
         Pageable pageable = PageRequest.of(from / size, size);
         if (pinned != null) {
             compilations = compilationRepository.findAllByPinned(pinned, pageable);
