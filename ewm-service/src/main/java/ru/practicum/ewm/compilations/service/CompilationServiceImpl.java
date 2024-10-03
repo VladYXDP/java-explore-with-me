@@ -5,14 +5,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.compilations.dto.CompilationDto;
 import ru.practicum.ewm.compilations.entity.Compilation;
 import ru.practicum.ewm.compilations.repository.CompilationRepository;
 import ru.practicum.ewm.events.entity.Event;
 import ru.practicum.ewm.events.repository.EventRepository;
+import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.requests.entity.Request;
 import ru.practicum.ewm.requests.repository.RequestRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -71,44 +72,31 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional(readOnly = true)
     @Override
     public List<Compilation> getCompilations(Boolean pinned, Integer from, Integer size) {
+        List<Compilation> compilations = new ArrayList<>();
         Pageable pageable = PageRequest.of(from / size, size);
         if (pinned != null) {
-            List<Compilation> compilations = compilationRepository.findAllByPinned(pinned, pageable);
-            compilations.stream().map()
-            if (compilation.getEvents() != null) {
-                List<Long> ids = compilation.getEvents().stream().map(Event::getId).collect(Collectors.toList());
-                Map<Long, Long> confirmedRequests = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED)
-                        .stream()
-                        .collect(Collectors.toMap(ConfirmedRequests::getEvent, ConfirmedRequests::getCount));
-
-            List<CompilationDto> result = new ArrayList<>();
-            for (Compilation compilation : compilations) {
-                CompilationDto compilationDto = CompilationMapper.toCompilationDto(compilation);
-
-                    compilationDto.setEvents(compilation.getEvents().stream()
-                            .map(event -> EventMapper.toEventShortDto(event, confirmedRequests.get(event.getId())))
-                            .collect(Collectors.toList()));
-                }
-                result.add(compilationDto);
-            }
-            return result;
-        } else {
-            List<Compilation> compilations = compilationRepository.findAll(pageable).getContent();
-            List<CompilationDto> result = new ArrayList<>();
-            for (Compilation compilation : compilations) {
-                CompilationDto compilationDto = CompilationMapper.toCompilationDto(compilation);
+            compilations = compilationRepository.findAllByPinned(pinned, pageable);
+            compilations.forEach(compilation -> {
                 if (compilation.getEvents() != null) {
-                    List<Long> ids = compilation.getEvents().stream().map(Event::getId).collect(Collectors.toList());
+                    List<Long> ids = compilation.getEvents().stream().map(Event::getId).toList();
+                    Map<Long, Long> confirmedRequest = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED)
+                            .stream()
+                            .collect(Collectors.toMap(Request::getCount, Request::getEventId));
+                }
+            });
+            return compilations;
+        } else {
+            compilations = compilationRepository.findAll(pageable).getContent();
+            compilations.forEach(compilation -> {
+                if (compilation.getEvents() != null) {
+                    List<Long> ids = compilation.getEvents().stream().map(Event::getId).toList();
                     Map<Long, Long> confirmedRequests = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED)
                             .stream()
-                            .collect(Collectors.toMap(ConfirmedRequests::getEvent, ConfirmedRequests::getCount));
-                    compilationDto.setEvents(compilation.getEvents().stream()
-                            .map(event -> EventMapper.toEventShortDto(event, confirmedRequests.get(event.getId())))
-                            .collect(Collectors.toList()));
+                            .collect(Collectors.toMap(Request::getCount, Request::getEventId));
+                    compilation.getEvents().forEach(event -> event.setConfirmedRequest(confirmedRequests.get(event.getId())));
                 }
-                result.add(compilationDto);
-            }
-            return result;
+            });
+            return compilations;
         }
     }
 
@@ -116,17 +104,14 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public Compilation getCompilationById(Long compilationId) {
         Compilation compilation = getCompilation(compilationId);
-        CompilationDto compilationDto = CompilationMapper.toCompilationDto(compilation);
         if (compilation.getEvents() != null) {
             List<Long> ids = compilation.getEvents().stream().map(Event::getId).collect(Collectors.toList());
             Map<Long, Long> confirmedRequests = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED)
                     .stream()
-                    .collect(Collectors.toMap(ConfirmedRequests::getEvent, ConfirmedRequests::getCount));
-            compilationDto.setEvents(compilation.getEvents().stream()
-                    .map(event -> EventMapper.toEventShortDto(event, confirmedRequests.get(event.getId())))
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toMap(Request::getCount, Request::getEventId));
+            compilation.getEvents().forEach(event -> event.setConfirmedRequest(confirmedRequests.get(event.getId())));
         }
-        return compilationDto;
+        return compilation;
     }
 
     @Override
