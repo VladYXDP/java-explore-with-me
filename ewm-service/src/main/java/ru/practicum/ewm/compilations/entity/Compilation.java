@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.ewm.events.entity.Event;
 
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Getter
@@ -30,7 +30,7 @@ public class Compilation {
     @JoinTable(name = "compilation_event",
             joinColumns = @JoinColumn(name = "compilation_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id"))
-    private Set<Event> events;
+    private List<Event> events;
 
     public Compilation(String title, Boolean pinned) {
         this.title = title;

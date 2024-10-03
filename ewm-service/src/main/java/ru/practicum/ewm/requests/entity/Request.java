@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "requests")
 public class Request {
@@ -33,4 +32,15 @@ public class Request {
 
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
+
+    @Transient
+    private Long eventId;
+
+    @Transient
+    private Long count;
+
+    public Request(Long count, Long eventId) {
+        this.count = count;
+        this.eventId = eventId;
+    }
 }

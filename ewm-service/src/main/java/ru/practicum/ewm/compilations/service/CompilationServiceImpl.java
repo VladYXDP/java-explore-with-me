@@ -1,13 +1,16 @@
 package ru.practicum.ewm.compilations.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.ewm.compilations.dto.CompilationDto;
 import ru.practicum.ewm.compilations.entity.Compilation;
 import ru.practicum.ewm.compilations.repository.CompilationRepository;
 import ru.practicum.ewm.events.entity.Event;
 import ru.practicum.ewm.events.repository.EventRepository;
-import ru.practicum.ewm.requests.dto.ConfirmedRequestDto;
+import ru.practicum.ewm.requests.entity.Request;
 import ru.practicum.ewm.requests.repository.RequestRepository;
 
 import java.util.List;
@@ -21,72 +24,67 @@ import static ru.practicum.ewm.requests.enums.RequestStatus.CONFIRMED;
 @RequiredArgsConstructor
 public class CompilationServiceImpl implements CompilationService {
 
-    private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
     private final RequestRepository requestRepository;
+    private final CompilationRepository compilationRepository;
 
     @Override
     public Compilation addCompilation(Compilation compilation) {
+        List<Event> events = null;
         if (compilation.getEvents() != null) {
-            compilation.setEvents(eventRepository.findAllByIdIn(compilation.getEvents().stream().map(Event::getId).toList()));
+            events = eventRepository.findAllByIdIn(compilation.getEvents().stream().map(Event::getId).toList());
         }
-        if (compilation.getEvents() != null) {
+        if (events != null) {
+            compilation.setEvents(events);
             List<Long> ids = compilation.getEvents().stream().map(Event::getId).toList();
             Map<Long, Long> confirmedRequests = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED)
                     .stream()
-                    .collect(Collectors.toMap(ConfirmedRequestDto::getEvent, ConfirmedRequestDto::getCount));
-            compilation.setEvents(compilation.getEvents().stream()
-                    .map(event -> EventMapper.toEventShortDto(event, confirmedRequests.get(event.getId())))
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toMap(Request::getEventId, Request::getCount));
+            events.forEach(event -> event.setConfirmedRequest(confirmedRequests.get(event.getId())));
         }
-        return compilationDto;
+        return compilation;
     }
 
     @Override
-    public CompilationDto updateCompilation(Long compId, UpdateCompilationRequest updateCompilation) {
-        Compilation compilation = getCompilation(compId);
-        if (updateCompilation.getEvents() != null) {
-            Set<Event> events = updateCompilation.getEvents().stream().map(id -> {
-                Event event = new Event();
-                event.setId(id);
-                return event;
-            }).collect(Collectors.toSet());
-            compilation.setEvents(events);
-        }
-        if (updateCompilation.getPinned() != null) {
-            compilation.setPinned(updateCompilation.getPinned());
-        }
-        String title = updateCompilation.getTitle();
-        if (title != null && !title.isBlank()) {
-            compilation.setTitle(title);
-        }
-        CompilationDto compilationDto = CompilationMapper.toCompilationDto(compilationRepository.save(compilation));
+    public Compilation updateCompilation(Long compId, Compilation compilation) {
+        Compilation currentCompilation = getCompilation(compId);
         if (compilation.getEvents() != null) {
-            List<Long> ids = compilation.getEvents().stream().map(Event::getId).collect(Collectors.toList());
+            currentCompilation.setEvents(compilation.getEvents());
+        }
+        if (compilation.getPinned() != null) {
+            currentCompilation.setPinned(compilation.getPinned());
+        }
+        String title = compilation.getTitle();
+        if (title != null && !title.isBlank()) {
+            currentCompilation.setTitle(title);
+        }
+        if(currentCompilation.getEvents() != null) {
+            List<Long> ids = currentCompilation.getEvents().stream().map(Event::getId).toList();
             Map<Long, Long> confirmedRequests = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED)
                     .stream()
-                    .collect(Collectors.toMap(ConfirmedRequests::getEvent, ConfirmedRequests::getCount));
-            compilationDto.setEvents(compilation.getEvents().stream()
-                    .map(event -> EventMapper.toEventShortDto(event, confirmedRequests.get(event.getId())))
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toMap(Request::getCount, Request::getEventId));
+            currentCompilation.getEvents().forEach(event -> event.setConfirmedRequest(confirmedRequests.get(event.getConfirmedRequest())));
         }
-        return compilationDto;
+        return compilationRepository.save(currentCompilation);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size) {
+    public List<Compilation> getCompilations(Boolean pinned, Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
         if (pinned != null) {
             List<Compilation> compilations = compilationRepository.findAllByPinned(pinned, pageable);
+            compilations.stream().map()
+            if (compilation.getEvents() != null) {
+                List<Long> ids = compilation.getEvents().stream().map(Event::getId).collect(Collectors.toList());
+                Map<Long, Long> confirmedRequests = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED)
+                        .stream()
+                        .collect(Collectors.toMap(ConfirmedRequests::getEvent, ConfirmedRequests::getCount));
+
             List<CompilationDto> result = new ArrayList<>();
             for (Compilation compilation : compilations) {
                 CompilationDto compilationDto = CompilationMapper.toCompilationDto(compilation);
-                if (compilation.getEvents() != null) {
-                    List<Long> ids = compilation.getEvents().stream().map(Event::getId).collect(Collectors.toList());
-                    Map<Long, Long> confirmedRequests = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED)
-                            .stream()
-                            .collect(Collectors.toMap(ConfirmedRequests::getEvent, ConfirmedRequests::getCount));
+
                     compilationDto.setEvents(compilation.getEvents().stream()
                             .map(event -> EventMapper.toEventShortDto(event, confirmedRequests.get(event.getId())))
                             .collect(Collectors.toList()));
@@ -116,7 +114,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Transactional(readOnly = true)
     @Override
-    public CompilationDto getCompilationById(Long compilationId) {
+    public Compilation getCompilationById(Long compilationId) {
         Compilation compilation = getCompilation(compilationId);
         CompilationDto compilationDto = CompilationMapper.toCompilationDto(compilation);
         if (compilation.getEvents() != null) {

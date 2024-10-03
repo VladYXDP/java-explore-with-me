@@ -10,6 +10,7 @@ import ru.practicum.ewm.events.entity.Event;
 import ru.practicum.ewm.location.LocationMapper;
 import ru.practicum.ewm.users.mapper.UserMapper;
 
+import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -33,6 +34,10 @@ public class EventMapper {
                 .build();
     }
 
+    public List<Event> toEvent(List<EventFullDto> events) {
+        return events.stream().map(this::toEvent).toList();
+    }
+
     public Event toEvent(EventFullDto dto) {
         return Event.builder()
                 .id(dto.getId())
@@ -47,7 +52,7 @@ public class EventMapper {
                 .build();
     }
 
-    public List<EventFullDto> toEventDto(List<Event> events) {
+    public List<EventFullDto> toEventDto(Collection<Event> events) {
         return events.stream().map(this::toEventDto).toList();
     }
 

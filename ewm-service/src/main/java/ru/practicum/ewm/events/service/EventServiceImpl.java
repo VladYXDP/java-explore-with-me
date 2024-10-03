@@ -25,6 +25,7 @@ import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.location.Location;
 import ru.practicum.ewm.location.LocationRepository;
 import ru.practicum.ewm.requests.dto.ConfirmedRequestDto;
+import ru.practicum.ewm.requests.entity.Request;
 import ru.practicum.ewm.requests.repository.RequestRepository;
 import ru.practicum.ewm.users.entity.User;
 import ru.practicum.ewm.users.repository.UserRepository;
@@ -190,7 +191,7 @@ public class EventServiceImpl implements EventService {
         List<Long> ids = events.stream().map(Event::getId).collect(Collectors.toList());
         Map<Long, Long> confirmedRequests = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED)
                 .stream()
-                .collect(Collectors.toMap(ConfirmedRequestDto::getEvent, ConfirmedRequestDto::getCount));
+                .collect(Collectors.toMap(Request::getCount, Request::getEventId));
         return events.stream()
                 .peek(event -> event.setConfirmedRequest(confirmedRequests.getOrDefault(event.getId(), 0L)))
                 .collect(Collectors.toList());
@@ -249,7 +250,7 @@ public class EventServiceImpl implements EventService {
             });
             List<Long> ids = events.stream().map(Event::getId).collect(Collectors.toList());
             Map<Long, Long> confirmedRequests = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED).stream()
-                    .collect(Collectors.toMap(ConfirmedRequestDto::getEvent, ConfirmedRequestDto::getCount));
+                    .collect(Collectors.toMap(Request::getCount, Request::getEventId));
             for (Event event : events) {
                 if (!statsDto.isEmpty()) {
                     event.setConfirmedRequest(confirmedRequests.getOrDefault(event.getId(), 0L));
@@ -326,7 +327,7 @@ public class EventServiceImpl implements EventService {
             List<Long> ids = events.stream().map(Event::getId).collect(Collectors.toList());
             Map<Long, Long> confirmedRequests = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED)
                     .stream()
-                    .collect(Collectors.toMap(ConfirmedRequestDto::getEvent, ConfirmedRequestDto::getCount));
+                    .collect(Collectors.toMap(Request::getCount, Request::getEventId));
             List<ViewStats> statsDto = objectMapper.convertValue(response.getBody(), new TypeReference<>() {
             });
             for (Event event : events) {
