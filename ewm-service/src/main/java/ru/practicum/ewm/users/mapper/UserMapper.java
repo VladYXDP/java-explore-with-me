@@ -6,8 +6,14 @@ import ru.practicum.ewm.users.dto.UserDto;
 import ru.practicum.ewm.users.dto.UserShortDto;
 import ru.practicum.ewm.users.entity.User;
 
+import java.util.List;
+
 @Component
 public class UserMapper {
+
+    public List<UserDto> toUserDto(List<User> users) {
+        return users.stream().map(this::toUserDto).toList();
+    }
 
     public UserDto toUserDto(User user) {
         return new UserDto(

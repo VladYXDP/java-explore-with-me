@@ -1,15 +1,22 @@
 package ru.practicum.ewm.comments.mapper;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.ewm.comments.dto.CommentDto;
 import ru.practicum.ewm.comments.dto.CreateCommentDto;
 import ru.practicum.ewm.comments.entity.Comment;
+import ru.practicum.ewm.events.mapper.EventMapper;
+import ru.practicum.ewm.users.mapper.UserMapper;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class CommentMapper {
+
+    private final UserMapper userMapper;
+    private final EventMapper eventMapper;
 
     public Comment toComment(CreateCommentDto createCommentDto) {
         Comment comment = new Comment();
@@ -26,8 +33,8 @@ public class CommentMapper {
         return new CommentDto(
                 comment.getId(),
                 comment.getText(),
-                comment.getEvent(),
-                comment.getAuthor(),
+                userMapper.toUserShortDto(comment.getAuthor()),
+                eventMapper.toEventShortDto(comment.getEvent()),
                 comment.getCreated(),
                 comment.getEdited()
         );
