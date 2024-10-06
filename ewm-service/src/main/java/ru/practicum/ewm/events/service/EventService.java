@@ -10,7 +10,7 @@ public interface EventService {
 
     Event addEvent(Long userId, Event event);
 
-    Event updateEventByOwner(Long userId, Long eventId, Event updateEvent);
+    Event updateEventByOwner(Event updateEvent);
 
     Event updateEventByAdmin(Long eventId, Event updateEvent);
 

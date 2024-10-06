@@ -6,7 +6,10 @@ import org.springframework.stereotype.Component;
 public class LocationMapper {
 
     public Location toLocation(LocationDto locationDto) {
-        return new Location(locationDto.getLat(), locationDto.getLon());
+        if (locationDto != null) {
+            return new Location(locationDto.getLat(), locationDto.getLon());
+        }
+        return null;
     }
 
     public LocationDto toLocationDto(Location location) {

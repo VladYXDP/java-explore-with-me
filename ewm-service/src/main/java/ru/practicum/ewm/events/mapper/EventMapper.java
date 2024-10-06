@@ -1,12 +1,17 @@
 package ru.practicum.ewm.events.mapper;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.sql.Update;
 import org.springframework.stereotype.Component;
 import ru.practicum.ewm.categories.mapper.CategoryMapper;
 import ru.practicum.ewm.events.dto.CreateEventDto;
 import ru.practicum.ewm.events.dto.EventFullDto;
 import ru.practicum.ewm.events.dto.EventShortDto;
+import ru.practicum.ewm.events.dto.UpdateEventUserRequest;
 import ru.practicum.ewm.events.entity.Event;
+import ru.practicum.ewm.events.enums.State;
+import ru.practicum.ewm.events.enums.StateActionAdmin;
+import ru.practicum.ewm.events.enums.StateActionPrivate;
 import ru.practicum.ewm.location.LocationMapper;
 import ru.practicum.ewm.users.mapper.UserMapper;
 
@@ -31,6 +36,24 @@ public class EventMapper {
                 .participantLimit(dto.getParticipantLimit())
                 .requestModeration(dto.isRequestModeration())
                 .title(dto.getTitle())
+                .categoryId(dto.getCategory())
+                .build();
+    }
+
+    public Event toEvent(UpdateEventUserRequest dto) {
+        return Event.builder()
+                .id(dto.getEventId())
+                .annotation(dto.getAnnotation())
+                .categoryId(dto.getCategory())
+                .description(dto.getDescription())
+                .eventDate(dto.getEventDate())
+                .location(locationMapper.toLocation(dto.getLocation()))
+                .paid(dto.getPaid())
+                .participantLimit(dto.getParticipantLimit())
+                .requestModeration(dto.getRequestModeration())
+                .stateActionPrivate(StateActionPrivate.valueOf(dto.getStateAction()))
+                .title(dto.getTitle())
+                .userId(dto.getUserId())
                 .build();
     }
 

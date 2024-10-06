@@ -3,7 +3,7 @@ package ru.practicum.ewm.requests.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import ru.practicum.ewm.requests.dto.ConfirmedRequestDto;
+import ru.practicum.ewm.events.entity.Event;
 import ru.practicum.ewm.requests.entity.Request;
 import ru.practicum.ewm.requests.enums.RequestStatus;
 
@@ -13,15 +13,15 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     Request findByIdAndRequesterId(Long requestId, Long userId);
 
-    List<Request> findAllByEventId(Long eventId);
+    List<Request> findAllByEvent(Event event);
 
     List<Request> findAllByRequesterId(Long userId);
 
-    List<Request> findAllByEventIdAndIdInAndStatus(Long eventId, List<Long> requestId, RequestStatus status);
+    List<Request> findAllByEventAndIdInAndStatus(Event event, List<Long> requestId, RequestStatus status);
 
-    Boolean existsByRequesterIdAndEventId(Long userId, Long eventId);
+    Boolean existsByRequesterIdAndEvent(Long userId, Event event);
 
-    long countByEventIdAndStatus(Long eventId, RequestStatus status);
+    long countByEventAndStatus(Event event, RequestStatus status);
 
     @Query("SELECT new ru.practicum.ewm.requests.entity.Request(COUNT(DISTINCT r.id), r.event.id) " +
             "FROM Request AS r " +

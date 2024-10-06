@@ -76,4 +76,10 @@ public class Event {
 
     @Transient
     private StateActionPrivate stateActionPrivate;
+
+    @Transient
+    private Long categoryId;
+
+    @Transient
+    private Long userId;
 }

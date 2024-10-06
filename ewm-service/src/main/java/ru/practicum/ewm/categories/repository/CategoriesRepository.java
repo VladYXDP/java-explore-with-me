@@ -5,5 +5,4 @@ import ru.practicum.ewm.categories.entity.Category;
 
 public interface CategoriesRepository extends JpaRepository<Category, Long> {
 
-    
 }

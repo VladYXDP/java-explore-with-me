@@ -37,7 +37,7 @@ public class RequestServiceImpl implements RequestService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
         User user = getUser(userId);
-        if (requestRepository.existsByRequesterIdAndEventId(userId, eventId)) {
+        if (requestRepository.existsByRequesterIdAndEvent(userId, event)) {
             throw new ForbiddenException("Request is already exist.");
         }
         if (userId.equals(event.getInitiator().getId())) {
@@ -47,7 +47,7 @@ public class RequestServiceImpl implements RequestService {
             throw new ForbiddenException("Participation is possible only in published event.");
         }
         if (event.getParticipantLimit() != 0 && event.getParticipantLimit() <=
-                requestRepository.countByEventIdAndStatus(eventId, CONFIRMED)) {
+                requestRepository.countByEventAndStatus(event, CONFIRMED)) {
             throw new ForbiddenException("Participant limit has been reached.");
         }
         Request request = new Request();
@@ -72,13 +72,13 @@ public class RequestServiceImpl implements RequestService {
         if (!event.getInitiator().equals(initiator)) {
             throw new ValidationException("User isn't initiator.");
         }
-        long confirmedRequests = requestRepository.countByEventIdAndStatus(eventId, CONFIRMED);
+        long confirmedRequests = requestRepository.countByEventAndStatus(event, CONFIRMED);
         if (event.getParticipantLimit() > 0 && event.getParticipantLimit() <= confirmedRequests) {
             throw new ForbiddenException("The participant limit has been reached.");
         }
         List<Request> confirmed = new ArrayList<>();
         List<Request> rejected = new ArrayList<>();
-        List<Request> requests = requestRepository.findAllByEventIdAndIdInAndStatus(eventId,
+        List<Request> requests = requestRepository.findAllByEventAndIdInAndStatus(event,
                 requestUpdateDto.getRequestIds(), PENDING);
         for (int i = 0; i < requests.size(); i++) {
             Request request = requests.get(i);
@@ -109,9 +109,9 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public List<Request> getRequestsByEventOwner(Long userId, Long eventId) {
         checkUser(userId);
-        eventRepository.findByIdAndInitiatorId(eventId, userId).orElseThrow(() ->
+        Event event = eventRepository.findByIdAndInitiatorId(eventId, userId).orElseThrow(() ->
                 new NotFoundException("Event with id=" + eventId + " was not found"));
-        return requestRepository.findAllByEventId(eventId);
+        return requestRepository.findAllByEvent(event);
     }
 
     @Transactional(readOnly = true)

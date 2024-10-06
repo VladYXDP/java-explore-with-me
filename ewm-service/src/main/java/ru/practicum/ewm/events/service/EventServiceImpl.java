@@ -24,7 +24,6 @@ import ru.practicum.ewm.exceptions.ForbiddenException;
 import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.location.Location;
 import ru.practicum.ewm.location.LocationRepository;
-import ru.practicum.ewm.requests.dto.ConfirmedRequestDto;
 import ru.practicum.ewm.requests.entity.Request;
 import ru.practicum.ewm.requests.repository.RequestRepository;
 import ru.practicum.ewm.users.entity.User;
@@ -50,7 +49,6 @@ import static ru.practicum.ewm.requests.enums.RequestStatus.CONFIRMED;
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
 
-    private final StatsClient statsClient;
     private final ObjectMapper objectMapper;
     private final UserRepository userRepository;
     private final CategoryService categoryService;
@@ -58,6 +56,8 @@ public class EventServiceImpl implements EventService {
     private final RequestRepository requestRepository;
     private final LocationRepository locationRepository;
     private final CategoriesRepository categoriesRepository;
+
+    private StatsClient statsClient = new StatsClient();
 
     @Value("${app}")
     private String app;
@@ -67,9 +67,8 @@ public class EventServiceImpl implements EventService {
         checkDate(event.getEventDate());
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("Пользователь с id =" + userId + " не найден!"));
-        Long catId = event.getCategory().getId();
-        Category category = categoriesRepository.findById(catId).orElseThrow(() ->
-                new NotFoundException("Категория с id=" + catId + " не найдена!"));
+        Category category = categoriesRepository.findById(event.getCategoryId()).orElseThrow(() ->
+                new NotFoundException("Категория с id=" + event.getCategoryId() + " не найдена!"));
         Location location = checkLocation(event.getLocation());
         event.setInitiator(user);
         event.setCategory(category);
@@ -80,8 +79,8 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Event updateEventByOwner(Long userId, Long eventId, Event event) {
-        Event currentEvent = getEvent(eventId, userId);
+    public Event updateEventByOwner(Event event) {
+        Event currentEvent = getEvent(event.getId(), event.getUserId());
         if (currentEvent.getState() == PUBLISHED) {
             throw new ForbiddenException("Ошибка обновления события!");
         }
@@ -102,8 +101,7 @@ public class EventServiceImpl implements EventService {
             currentEvent.setEventDate(eventDate);
         }
         if (event.getLocation() != null) {
-            Location location = checkLocation(event.getLocation());
-            currentEvent.setLocation(location);
+            currentEvent.setLocation(checkLocation(event.getLocation()));
         }
         if (event.getPaid() != null) {
             currentEvent.setPaid(event.getPaid());
@@ -126,7 +124,7 @@ public class EventServiceImpl implements EventService {
                 currentEvent.setState(State.CANCELED);
             }
         }
-        currentEvent.setConfirmedRequest(requestRepository.countByEventIdAndStatus(eventId, CONFIRMED));
+        currentEvent.setConfirmedRequest(requestRepository.countByEventAndStatus(event, CONFIRMED));
         return eventRepository.save(currentEvent);
     }
 
@@ -180,7 +178,7 @@ public class EventServiceImpl implements EventService {
         if (title != null && !title.isBlank()) {
             currentEvent.setTitle(title);
         }
-        currentEvent.setConfirmedRequest(requestRepository.countByEventIdAndStatus(eventId, CONFIRMED));
+        currentEvent.setConfirmedRequest(requestRepository.countByEventAndStatus(event, CONFIRMED));
         return eventRepository.save(currentEvent);
     }
 
@@ -201,7 +199,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public Event getEventByOwner(Long userId, Long eventId) {
         Event event = getEvent(eventId, userId);
-        event.setConfirmedRequest(requestRepository.countByEventIdAndStatus(eventId, CONFIRMED));
+        event.setConfirmedRequest(requestRepository.countByEventAndStatus(event, CONFIRMED));
         return event;
     }
 
@@ -357,7 +355,7 @@ public class EventServiceImpl implements EventService {
                 List.of(request.getRequestURI()), true);
         List<ViewStats> statsDto = objectMapper.convertValue(response.getBody(), new TypeReference<>() {
         });
-        event.setConfirmedRequest(requestRepository.countByEventIdAndStatus(eventId, CONFIRMED));
+        event.setConfirmedRequest(requestRepository.countByEventAndStatus(event, CONFIRMED));
         if (!statsDto.isEmpty()) {
             event.setViews(statsDto.get(0).getHits());
         } else {
