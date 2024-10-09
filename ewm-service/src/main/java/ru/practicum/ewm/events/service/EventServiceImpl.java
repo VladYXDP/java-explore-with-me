@@ -20,6 +20,7 @@ import ru.practicum.ewm.events.enums.State;
 import ru.practicum.ewm.events.enums.StateActionAdmin;
 import ru.practicum.ewm.events.enums.StateActionPrivate;
 import ru.practicum.ewm.events.repository.EventRepository;
+import ru.practicum.ewm.events.repository.EventSpecification;
 import ru.practicum.ewm.exceptions.ForbiddenException;
 import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.location.Location;
@@ -213,24 +214,19 @@ public class EventServiceImpl implements EventService {
         }
         Specification<Event> specification = Specification.where(null);
         if (users != null) {
-            specification = specification.and((root, query, criteriaBuilder) ->
-                    root.get("initiator").get("id").in(users));
+            specification = specification.or(EventSpecification.inInitiator(users));
         }
         if (states != null) {
-            specification = specification.and((root, query, criteriaBuilder) ->
-                    root.get("state").as(String.class).in(states));
+            specification = specification.or(EventSpecification.inState(states));
         }
         if (categories != null) {
-            specification = specification.and((root, query, criteriaBuilder) ->
-                    root.get("category").get("id").in(categories));
+            specification = specification.or(EventSpecification.inCategories(categories));
         }
         if (rangeStart != null) {
-            specification = specification.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.greaterThanOrEqualTo(root.get("eventDate"), rangeStart));
+            specification = specification.or(EventSpecification.atRangeStart(rangeStart));
         }
-        if (rangeEnd != null) {
-            specification = specification.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.lessThanOrEqualTo(root.get("eventDate"), rangeEnd));
+        if (rangeStart != null) {
+            specification = specification.or(EventSpecification.atRangeEnd(rangeEnd));
         }
         List<Event> events = eventRepository.findAll(specification, PageRequest.of(from / size, size)).getContent();
         List<Event> result = new ArrayList<>();

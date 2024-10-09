@@ -14,26 +14,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CreateEventDto {
 
-    @Size(min = 20, max = 2000)
-    @NotBlank
     private String annotation;
-    @NotNull
     private Long category;
-    @Size(min = 20, max = 7000)
-    @NotBlank
     private String description;
-    @NotNull
-    @Future
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
-    @NotNull
-    @Valid
     private LocationDto location;
     private boolean paid = false;
-    @PositiveOrZero
     private int participantLimit = 0;
     private boolean requestModeration = true;
-    @Size(min = 3, max = 120)
-    @NotBlank
+    private String stateAction;
     private String title;
 }

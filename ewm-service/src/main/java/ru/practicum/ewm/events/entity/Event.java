@@ -48,6 +48,7 @@ public class Event {
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
 
+    @Column
     private Boolean paid;
 
     @Column(name = "participant_limit")

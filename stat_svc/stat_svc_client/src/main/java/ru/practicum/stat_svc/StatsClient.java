@@ -3,6 +3,7 @@ package ru.practicum.stat_svc;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,7 +14,7 @@ import java.util.List;
 public class StatsClient {
 
     @Value("${server.url}")
-    private String serverUrl;
+    private final String serverUrl = "http://localhost:9090/";
     private final RestTemplate rest;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 

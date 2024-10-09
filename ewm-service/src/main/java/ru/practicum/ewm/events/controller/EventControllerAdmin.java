@@ -19,8 +19,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EventControllerAdmin {
 
-    private final EventService eventService;
     private final EventMapper eventMapper;
+    private final EventService eventService;
 
     @PatchMapping("/{eventId}")
     public EventFullDto updateEventByAdmin(@PathVariable Long eventId,
