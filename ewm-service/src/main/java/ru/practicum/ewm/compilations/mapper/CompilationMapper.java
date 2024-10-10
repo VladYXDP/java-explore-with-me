@@ -16,16 +16,20 @@ public class CompilationMapper {
     private final EventMapper eventMapper;
 
     public Compilation toCompilation(CreateCompilationDto dto) {
-        return new Compilation(
-                dto.getTitle(),
-                dto.isPinned()
-        );
+        return Compilation.builder()
+                .title(dto.getTitle())
+                .eventsId(dto.getEvents())
+                .pinned(dto.isPinned())
+                .build();
     }
 
     public Compilation toCompilation(CompilationDto dto) {
-        return new Compilation(
-                dto.getId(), dto.getTitle(), dto.getPinned(), eventMapper.toEvent(dto.getEvents())
-        );
+        return Compilation.builder()
+                .id(dto.getId())
+                .title(dto.getTitle())
+                .pinned(dto.getPinned())
+                .events(eventMapper.toEvent(dto.getEvents()))
+                .build();
     }
 
     public List<CompilationDto> toCompilationDto(List<Compilation> compilation) {

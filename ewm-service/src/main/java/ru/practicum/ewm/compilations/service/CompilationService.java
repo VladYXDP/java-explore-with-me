@@ -8,7 +8,7 @@ public interface CompilationService {
 
     Compilation addCompilation(Compilation compilation);
 
-    Compilation updateCompilation(Long compId, Compilation compilation);
+    Compilation updateCompilation(Compilation compilation);
 
     List<Compilation> getCompilations(Boolean pinned, Integer from, Integer size);
 

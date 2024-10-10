@@ -30,11 +30,8 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     public Compilation addCompilation(Compilation compilation) {
-        List<Event> events = null;
-        if (compilation.getEvents() != null) {
-            events = eventRepository.findAllByIdIn(compilation.getEvents().stream().map(Event::getId).toList());
-        }
-        if (events != null) {
+        List<Event> events = eventRepository.findAllByIdIn(compilation.getEventsId());
+        if (!events.isEmpty()) {
             compilation.setEvents(events);
             List<Long> ids = compilation.getEvents().stream().map(Event::getId).toList();
             Map<Long, Long> confirmedRequests = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED)
@@ -42,12 +39,12 @@ public class CompilationServiceImpl implements CompilationService {
                     .collect(Collectors.toMap(Request::getEventId, Request::getCount));
             events.forEach(event -> event.setConfirmedRequest(confirmedRequests.get(event.getId())));
         }
-        return compilation;
+        return compilationRepository.save(compilation);
     }
 
     @Override
-    public Compilation updateCompilation(Long compId, Compilation compilation) {
-        Compilation currentCompilation = getCompilation(compId);
+    public Compilation updateCompilation(Compilation compilation) {
+        Compilation currentCompilation = getCompilation(compilation.getId());
         if (compilation.getEvents() != null) {
             currentCompilation.setEvents(compilation.getEvents());
         }

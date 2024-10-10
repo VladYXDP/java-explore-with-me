@@ -20,14 +20,14 @@ public class CompilationControllerAdmin {
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     public CompilationDto addCompilation(@RequestBody @Valid CreateCompilationDto dto) {
-        return compilationMapper.toCompilationDto(compilationMapper.toCompilation(dto));
+        return compilationMapper.toCompilationDto(compilationService.addCompilation(compilationMapper.toCompilation(dto)));
     }
 
-    @PatchMapping("/{compilationId}")
-    public CompilationDto updateCompilation(@PathVariable Long compilationId,
+    @PatchMapping("/{compId}")
+    public CompilationDto updateCompilation(@PathVariable Long compId,
                                             @RequestBody @Valid CompilationDto dto) {
-        dto.setId(compilationId);
-        return compilationMapper.toCompilationDto(compilationMapper.toCompilation(dto));
+        dto.setId(compId);
+        return compilationMapper.toCompilationDto(compilationService.updateCompilation(compilationMapper.toCompilation(dto)));
     }
 
     @DeleteMapping("/{compilationId}")

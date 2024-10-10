@@ -39,7 +39,7 @@ public class Request {
     @Transient
     private Long count;
 
-    public Request(Long count, Long eventId) {
+    public Request(Long eventId, Long count) {
         this.count = count;
         this.eventId = eventId;
     }

@@ -179,7 +179,7 @@ public class EventServiceImpl implements EventService {
         if (title != null && !title.isBlank()) {
             currentEvent.setTitle(title);
         }
-        currentEvent.setConfirmedRequest(requestRepository.countByEventAndStatus(event, CONFIRMED));
+        currentEvent.setConfirmedRequest(requestRepository.countByEventAndStatus(currentEvent, CONFIRMED));
         return eventRepository.save(currentEvent);
     }
 
@@ -243,16 +243,18 @@ public class EventServiceImpl implements EventService {
             List<ViewStats> statsDto = objectMapper.convertValue(response.getBody(), new TypeReference<>() {
             });
             List<Long> ids = events.stream().map(Event::getId).collect(Collectors.toList());
-            Map<Long, Long> confirmedRequests = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED).stream()
-                    .collect(Collectors.toMap(Request::getCount, Request::getEventId));
+            List<Request> rq = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED);
+//            Map<Long, Long> confirmedRequests = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED).stream()
+//                    .collect(Collectors.toMap(Request::getEventId, Request::getCount));
             for (Event event : events) {
+//                event.setConfirmedRequest(confirmedRequests.getOrDefault(event.getId(), 0L));
                 if (!statsDto.isEmpty()) {
-                    event.setConfirmedRequest(confirmedRequests.getOrDefault(event.getId(), 0L));
                     event.setViews(statsDto.get(0).getHits());
-                    result.add(event);
                 } else {
-                    result.add(event);
+                    event.setConfirmedRequest(1L);
+                    event.setViews(0L);
                 }
+                result.add(event);
             }
             return result;
         }

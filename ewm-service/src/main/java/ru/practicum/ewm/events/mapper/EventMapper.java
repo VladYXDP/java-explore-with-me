@@ -15,6 +15,7 @@ import ru.practicum.ewm.events.enums.StateActionPrivate;
 import ru.practicum.ewm.location.LocationMapper;
 import ru.practicum.ewm.users.mapper.UserMapper;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class EventMapper {
                 .requestModeration(dto.isRequestModeration())
                 .title(dto.getTitle())
                 .categoryId(dto.getCategory())
+                .stateAction(dto.getStateAction())
                 .build();
     }
 
@@ -58,7 +60,10 @@ public class EventMapper {
     }
 
     public List<Event> toEvent(List<EventFullDto> events) {
-        return events.stream().map(this::toEvent).toList();
+        if (events != null) {
+            return events.stream().map(this::toEvent).toList();
+        }
+        return new ArrayList<>();
     }
 
     public Event toEvent(EventFullDto dto) {
@@ -76,7 +81,10 @@ public class EventMapper {
     }
 
     public List<EventFullDto> toEventDto(Collection<Event> events) {
-        return events.stream().map(this::toEventDto).toList();
+        if (events != null) {
+            return events.stream().map(this::toEventDto).toList();
+        }
+        return new ArrayList<>();
     }
 
     public EventFullDto toEventDto(Event event) {
@@ -96,6 +104,7 @@ public class EventMapper {
                 .requestModeration(event.getRequestModeration())
                 .state(event.getState())
                 .title(event.getTitle())
+                .views(event.getViews())
                 .build();
     }
 

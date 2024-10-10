@@ -1,10 +1,7 @@
 package ru.practicum.ewm.compilations.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ru.practicum.ewm.events.entity.Event;
 
 import java.util.List;
@@ -12,6 +9,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "compilations")
@@ -36,4 +34,7 @@ public class Compilation {
         this.title = title;
         this.pinned = pinned;
     }
+
+    @Transient
+    private List<Long> eventsId;
 }
