@@ -41,7 +41,7 @@ public class RequestServiceImpl implements RequestService {
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
         User user = getUser(userId);
         if (requestRepository.existsByRequesterIdAndEvent(userId, event)) {
-            throw new ForbiddenException("Request is already exist.");
+            throw new ForbiddenException("Запрос на участие уже существует!");
         }
         if (userId.equals(event.getInitiator().getId())) {
             throw new ForbiddenException("Initiator can't send request to his own event.");
@@ -49,19 +49,16 @@ public class RequestServiceImpl implements RequestService {
         if (!event.getState().equals(State.PUBLISHED)) {
             throw new ForbiddenException("Participation is possible only in published event.");
         }
-        long requestCount = requestRepository.countByEventAndStatus(event, CONFIRMED);
-        if (event.getParticipantLimit() == 0 || requestCount == event.getParticipantLimit()) {
-            throw new ForbiddenException("Превышено число участников события!");
-        }
+        checkParticipantLimit(event);
         Request request = new Request();
         request.setCreated(LocalDateTime.now());
         request.setEvent(event);
         request.setRequester(user);
 
         if (event.getRequestModeration() && event.getParticipantLimit() != 0) {
-            request.setStatus(PENDING);
-        } else {
             request.setStatus(CONFIRMED);
+        } else {
+            request.setStatus(PENDING);
         }
         return requestRepository.save(request);
     }
@@ -76,7 +73,7 @@ public class RequestServiceImpl implements RequestService {
             throw new ValidationException("User isn't initiator.");
         }
         long confirmedRequests = requestRepository.countByEventAndStatus(event, CONFIRMED);
-        if (event.getParticipantLimit() > 0 && event.getParticipantLimit() <= confirmedRequests) {
+        if (event.getParticipantLimit() == 0 || event.getParticipantLimit() == confirmedRequests) {
             throw new ForbiddenException("The participant limit has been reached.");
         }
         List<Request> confirmed = new ArrayList<>();
@@ -85,12 +82,12 @@ public class RequestServiceImpl implements RequestService {
                 requestUpdateDto.getRequestIds(), PENDING);
         for (int i = 0; i < requests.size(); i++) {
             Request request = requests.get(i);
-            if (requestUpdateDto.getStatus() == REJECTED) {
+            if (RequestStatus.valueOf(requestUpdateDto.getStatus()).equals(REJECTED)) {
                 request.setStatus(REJECTED);
                 rejected.add(request);
             }
-            if (requestUpdateDto.getStatus() == CONFIRMED && event.getParticipantLimit() > 0 &&
-                    (confirmedRequests + i) < event.getParticipantLimit()) {
+            if (RequestStatus.valueOf(requestUpdateDto.getStatus()).equals(CONFIRMED)
+                    && event.getParticipantLimit() > 0 && (confirmedRequests + i) < event.getParticipantLimit()) {
                 request.setStatus(CONFIRMED);
                 confirmed.add(request);
             } else {
@@ -132,6 +129,13 @@ public class RequestServiceImpl implements RequestService {
     private void checkUser(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("User with id=" + userId + " was not found");
+        }
+    }
+
+    private void checkParticipantLimit(Event event) {
+        long requestCount = requestRepository.countByEventAndStatus(event, CONFIRMED);
+        if (requestCount > 0 && requestCount == event.getParticipantLimit()) {
+            throw new ForbiddenException("Превышено число участников события!");
         }
     }
 }

@@ -12,5 +12,5 @@ import java.util.List;
 @NoArgsConstructor
 public class RequestUpdateDto {
     private List<Long> requestIds;
-    private RequestStatus status;
+    private String status;
 }

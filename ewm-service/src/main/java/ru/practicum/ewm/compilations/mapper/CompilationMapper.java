@@ -1,9 +1,11 @@
 package ru.practicum.ewm.compilations.mapper;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.sql.Update;
 import org.springframework.stereotype.Component;
 import ru.practicum.ewm.compilations.dto.CompilationDto;
 import ru.practicum.ewm.compilations.dto.CreateCompilationDto;
+import ru.practicum.ewm.compilations.dto.UpdateCompilationDto;
 import ru.practicum.ewm.compilations.entity.Compilation;
 import ru.practicum.ewm.events.mapper.EventMapper;
 
@@ -23,12 +25,12 @@ public class CompilationMapper {
                 .build();
     }
 
-    public Compilation toCompilation(CompilationDto dto) {
+    public Compilation toCompilation(UpdateCompilationDto dto) {
         return Compilation.builder()
                 .id(dto.getId())
                 .title(dto.getTitle())
-                .pinned(dto.getPinned())
-                .events(eventMapper.toEvent(dto.getEvents()))
+                .pinned(dto.isPinned())
+                .eventsId(dto.getEvents())
                 .build();
     }
 
@@ -40,7 +42,7 @@ public class CompilationMapper {
         return CompilationDto.builder()
                 .id(compilation.getId())
                 .title(compilation.getTitle())
-                .events(eventMapper.toEventDto(compilation.getEvents()))
+                .events(eventMapper.toEventShortDto(compilation.getEvents()))
                 .pinned(compilation.getPinned())
                 .build();
     }

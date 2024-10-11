@@ -169,6 +169,7 @@ public class EventServiceImpl implements EventService {
         if (event.getPaid() != null) {
             currentEvent.setPaid(event.getPaid());
         }
+        //пока непонятно как здесь обрабатывать
         if (event.getParticipantLimit() != null) {
             currentEvent.setParticipantLimit(event.getParticipantLimit());
         }
@@ -214,19 +215,19 @@ public class EventServiceImpl implements EventService {
         }
         Specification<Event> specification = Specification.where(null);
         if (users != null) {
-            specification = specification.or(EventSpecification.inInitiator(users));
+            specification = specification.and(EventSpecification.inInitiator(users));
         }
         if (states != null) {
-            specification = specification.or(EventSpecification.inState(states));
+            specification = specification.and(EventSpecification.inState(states));
         }
         if (categories != null) {
-            specification = specification.or(EventSpecification.inCategories(categories));
+            specification = specification.and(EventSpecification.inCategories(categories));
         }
         if (rangeStart != null) {
-            specification = specification.or(EventSpecification.atRangeStart(rangeStart));
+            specification = specification.and(EventSpecification.atRangeStart(rangeStart));
         }
         if (rangeStart != null) {
-            specification = specification.or(EventSpecification.atRangeEnd(rangeEnd));
+            specification = specification.and(EventSpecification.atRangeEnd(rangeEnd));
         }
         List<Event> events = eventRepository.findAll(specification, PageRequest.of(from / size, size)).getContent();
         List<Event> result = new ArrayList<>();
@@ -284,8 +285,7 @@ public class EventServiceImpl implements EventService {
             specification = specification.and((root, query, criteriaBuilder) ->
                     criteriaBuilder.equal(root.get("paid"), paid));
         }
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime startDateTime = Objects.requireNonNullElseGet(rangeStart, () -> now);
+        LocalDateTime startDateTime = Objects.requireNonNullElseGet(rangeStart, () -> LocalDateTime.now());
         specification = specification.and((root, query, criteriaBuilder) ->
                 criteriaBuilder.greaterThan(root.get("eventDate"), startDateTime));
         if (rangeEnd != null) {
@@ -324,14 +324,12 @@ public class EventServiceImpl implements EventService {
             Map<Long, Long> confirmedRequests = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED)
                     .stream()
                     .collect(Collectors.toMap(Request::getCount, Request::getEventId));
-            List<ViewStats> statsDto = objectMapper.convertValue(response.getBody(), new TypeReference<>() {
+        List<ViewStats> statsDto = objectMapper.convertValue(response.getBody(), new TypeReference<>() {
             });
             for (Event event : events) {
                 if (!statsDto.isEmpty()) {
                     event.setViews(statsDto.get(0).getHits());
                     event.setConfirmedRequest(confirmedRequests.getOrDefault(event.getId(), 0L));
-                    events.add(event);
-                } else {
                     events.add(event);
                 }
             }

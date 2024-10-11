@@ -130,7 +130,10 @@ public class EventMapper {
     }
 
     public List<EventShortDto> toEventShortDto(List<Event> events) {
-        return events.stream().map(this::toEventShortDto).toList();
+        if (events != null) {
+            return events.stream().map(this::toEventShortDto).toList();
+        }
+        return null;
     }
 
     public EventShortDto toEventShortDto(Event event) {
