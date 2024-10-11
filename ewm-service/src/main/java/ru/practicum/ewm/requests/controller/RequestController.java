@@ -1,5 +1,6 @@
 package ru.practicum.ewm.requests.controller;
 
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

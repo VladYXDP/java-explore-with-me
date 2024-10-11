@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import ru.practicum.ewm.categories.entity.Category;
 import ru.practicum.ewm.events.entity.Event;
 
 import java.util.List;
@@ -19,4 +20,6 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
     Page<Event> findAll(Specification<Event> specification, Pageable pageable);
 
     List<Event> findAllByIdIn(List<Long> events);
+
+    Optional<Event> findFirstByCategory(Category categoryId);
 }

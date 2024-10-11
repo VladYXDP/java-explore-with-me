@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.ewm.exceptions.AlreadyExistException;
 import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.users.entity.User;
 import ru.practicum.ewm.users.repository.UserRepository;
@@ -20,6 +21,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User addUser(User user) {
+        checkEmailWhenCreate(user.getEmail());
         return userRepository.save(user);
     }
 
@@ -40,5 +42,11 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("User with id=" + userId + " was not found");
         }
         userRepository.deleteById(userId);
+    }
+
+    private void checkEmailWhenCreate(String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw new AlreadyExistException("Ошибка добавления пользователя с email = " + email +"!");
+        }
     }
 }

@@ -28,12 +28,15 @@ import static ru.practicum.ewm.requests.enums.RequestStatus.*;
 @RequiredArgsConstructor
 public class RequestServiceImpl implements RequestService {
 
-    private final RequestRepository requestRepository;
-    private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final EventRepository eventRepository;
+    private final RequestRepository requestRepository;
 
     @Override
     public Request addRequest(Long userId, Long eventId) {
+        if (eventId == 0) {
+            throw new ForbiddenException("Ошибка добавления запроса на участие!");
+        }
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
         User user = getUser(userId);
@@ -46,9 +49,9 @@ public class RequestServiceImpl implements RequestService {
         if (!event.getState().equals(State.PUBLISHED)) {
             throw new ForbiddenException("Participation is possible only in published event.");
         }
-        if (event.getParticipantLimit() != 0 && event.getParticipantLimit() <=
-                requestRepository.countByEventAndStatus(event, CONFIRMED)) {
-            throw new ForbiddenException("Participant limit has been reached.");
+        long requestCount = requestRepository.countByEventAndStatus(event, CONFIRMED);
+        if (event.getParticipantLimit() == 0 || requestCount == event.getParticipantLimit()) {
+            throw new ForbiddenException("Превышено число участников события!");
         }
         Request request = new Request();
         request.setCreated(LocalDateTime.now());
@@ -65,7 +68,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public RequestResult updateRequestsStatus(Long userId, Long eventId,
-                                        RequestUpdateDto requestUpdateDto) {
+                                              RequestUpdateDto requestUpdateDto) {
         User initiator = getUser(userId);
         Event event = eventRepository.findByIdAndInitiatorId(eventId, userId).orElseThrow(() ->
                 new NotFoundException("Event with id=" + eventId + " was not found."));

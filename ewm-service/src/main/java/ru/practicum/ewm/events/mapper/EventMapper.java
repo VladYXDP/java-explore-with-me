@@ -53,7 +53,7 @@ public class EventMapper {
                 .paid(dto.getPaid())
                 .participantLimit(dto.getParticipantLimit())
                 .requestModeration(dto.getRequestModeration())
-                .stateActionPrivate(StateActionPrivate.valueOf(dto.getStateAction()))
+                .stateActionPrivate(StateActionPrivate.getState(dto.getStateAction()))
                 .title(dto.getTitle())
                 .userId(dto.getUserId())
                 .build();

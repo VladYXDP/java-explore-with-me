@@ -23,7 +23,7 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     long countByEventAndStatus(Event event, RequestStatus status);
 
-    @Query("SELECT new ru.practicum.ewm.requests.entity.Request(COUNT(DISTINCT r.id), r.event.id) " +
+    @Query("SELECT new ru.practicum.ewm.requests.entity.Request(r.event.id, COUNT(DISTINCT r.id)) " +
             "FROM Request AS r " +
             "WHERE r.event.id IN (:ids) AND r.status = :status " +
             "GROUP BY (r.event)")
