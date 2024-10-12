@@ -2,6 +2,7 @@ package ru.practicum.ewm.exceptions;
 
 import lombok.Builder;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -18,7 +19,7 @@ import ru.practicum.ewm.users.controller.UserController;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
-@RestControllerAdvice(assignableTypes = {
+@ControllerAdvice(assignableTypes = {
         UserController.class,
         RequestController.class,
         EventControllerAdmin.class,

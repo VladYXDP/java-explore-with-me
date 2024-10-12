@@ -3,11 +3,9 @@ package ru.practicum.ewm.events.mapper;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.sql.Update;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.events.EventTarget;
 import ru.practicum.ewm.categories.mapper.CategoryMapper;
-import ru.practicum.ewm.events.dto.CreateEventDto;
-import ru.practicum.ewm.events.dto.EventFullDto;
-import ru.practicum.ewm.events.dto.EventShortDto;
-import ru.practicum.ewm.events.dto.UpdateEventUserRequest;
+import ru.practicum.ewm.events.dto.*;
 import ru.practicum.ewm.events.entity.Event;
 import ru.practicum.ewm.events.enums.State;
 import ru.practicum.ewm.events.enums.StateActionAdmin;
@@ -28,6 +26,21 @@ public class EventMapper {
     private final LocationMapper locationMapper;
 
     public Event toEvent(CreateEventDto dto) {
+        return Event.builder()
+                .annotation(dto.getAnnotation())
+                .description(dto.getDescription())
+                .eventDate(dto.getEventDate())
+                .location(locationMapper.toLocation(dto.getLocation()))
+                .paid(dto.isPaid())
+                .participantLimit(dto.getParticipantLimit())
+                .requestModeration(dto.isRequestModeration())
+                .title(dto.getTitle())
+                .categoryId(dto.getCategory())
+                .stateAction(dto.getStateAction())
+                .build();
+    }
+
+    public Event toEvent(UpdateEventAdminDto dto) {
         return Event.builder()
                 .annotation(dto.getAnnotation())
                 .description(dto.getDescription())

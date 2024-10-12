@@ -73,7 +73,7 @@ public class RequestServiceImpl implements RequestService {
             throw new ValidationException("User isn't initiator.");
         }
         long confirmedRequests = requestRepository.countByEventAndStatus(event, CONFIRMED);
-        if (event.getParticipantLimit() == 0 || event.getParticipantLimit() == confirmedRequests) {
+        if (confirmedRequests > 0 && confirmedRequests == event.getParticipantLimit()) {
             throw new ForbiddenException("The participant limit has been reached.");
         }
         List<Request> confirmed = new ArrayList<>();
@@ -87,7 +87,7 @@ public class RequestServiceImpl implements RequestService {
                 rejected.add(request);
             }
             if (RequestStatus.valueOf(requestUpdateDto.getStatus()).equals(CONFIRMED)
-                    && event.getParticipantLimit() > 0 && (confirmedRequests + i) < event.getParticipantLimit()) {
+                    && event.getParticipantLimit() > 0 && confirmedRequests < event.getParticipantLimit()) {
                 request.setStatus(CONFIRMED);
                 confirmed.add(request);
             } else {

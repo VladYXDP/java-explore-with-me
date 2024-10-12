@@ -170,12 +170,12 @@ public class EventServiceImpl implements EventService {
             currentEvent.setPaid(event.getPaid());
         }
         //пока непонятно как здесь обрабатывать
-        if (event.getParticipantLimit() != null) {
+        if (event.getParticipantLimit() != null && !event.getParticipantLimit().equals(0)) {
             currentEvent.setParticipantLimit(event.getParticipantLimit());
         }
-        if (event.getRequestModeration() != null) {
-            currentEvent.setRequestModeration(event.getRequestModeration());
-        }
+//        if (event.getRequestModeration() != null) {
+//            currentEvent.setRequestModeration(event.getRequestModeration());
+//        }
         String title = event.getTitle();
         if (title != null && !title.isBlank()) {
             currentEvent.setTitle(title);
@@ -245,16 +245,17 @@ public class EventServiceImpl implements EventService {
             });
             List<Long> ids = events.stream().map(Event::getId).collect(Collectors.toList());
             List<Request> rq = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED);
-//            Map<Long, Long> confirmedRequests = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED).stream()
-//                    .collect(Collectors.toMap(Request::getEventId, Request::getCount));
+            Map<Long, Long> confirmedRequests = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED).stream()
+                    .collect(Collectors.toMap(Request::getEventId, Request::getCount));
             for (Event event : events) {
-//                event.setConfirmedRequest(confirmedRequests.getOrDefault(event.getId(), 0L));
+                event.setConfirmedRequest(confirmedRequests.getOrDefault(event.getId(), 0L));
                 if (!statsDto.isEmpty()) {
                     event.setViews(statsDto.get(0).getHits());
-                } else {
-                    event.setConfirmedRequest(1L);
-                    event.setViews(0L);
                 }
+//                else {
+//                    event.setConfirmedRequest(1L);
+//                    event.setViews(0L);
+//                }
                 result.add(event);
             }
             return result;
@@ -285,7 +286,7 @@ public class EventServiceImpl implements EventService {
             specification = specification.and((root, query, criteriaBuilder) ->
                     criteriaBuilder.equal(root.get("paid"), paid));
         }
-        LocalDateTime startDateTime = Objects.requireNonNullElseGet(rangeStart, () -> LocalDateTime.now());
+        LocalDateTime startDateTime = Objects.requireNonNullElseGet(rangeStart, LocalDateTime::now);
         specification = specification.and((root, query, criteriaBuilder) ->
                 criteriaBuilder.greaterThan(root.get("eventDate"), startDateTime));
         if (rangeEnd != null) {

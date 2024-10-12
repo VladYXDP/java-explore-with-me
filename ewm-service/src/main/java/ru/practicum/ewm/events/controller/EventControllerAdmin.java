@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.events.dto.CreateEventDto;
 import ru.practicum.ewm.events.dto.EventFullDto;
+import ru.practicum.ewm.events.dto.UpdateEventAdminDto;
 import ru.practicum.ewm.events.mapper.EventMapper;
 import ru.practicum.ewm.events.service.EventService;
 
@@ -24,8 +25,8 @@ public class EventControllerAdmin {
 
     @PatchMapping("/{eventId}")
     public EventFullDto updateEventByAdmin(@PathVariable Long eventId,
-                                           @RequestBody @Valid CreateEventDto createEventDto) {
-        return eventMapper.toEventDto(eventService.updateEventByAdmin(eventId, eventMapper.toEvent(createEventDto)));
+                                           @RequestBody @Valid UpdateEventAdminDto dto) {
+        return eventMapper.toEventDto(eventService.updateEventByAdmin(eventId, eventMapper.toEvent(dto)));
     }
 
     @GetMapping

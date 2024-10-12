@@ -2,27 +2,19 @@ package ru.practicum.ewm.events.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.practicum.ewm.location.LocationDto;
 
 import java.time.LocalDateTime;
 
-@Data
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
-public class CreateEventDto {
+@Setter
+public class UpdateEventAdminDto {
 
-    @NotNull
-    @NotBlank
     @Size(min = 20, max = 2000)
     private String annotation;
     private Long category;
-    @NotNull
-    @NotBlank
     @Size(min = 20, max = 7000)
     private String description;
     @FutureOrPresent
