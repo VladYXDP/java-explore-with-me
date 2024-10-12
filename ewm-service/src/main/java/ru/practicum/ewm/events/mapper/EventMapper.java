@@ -133,7 +133,7 @@ public class EventMapper {
         if (events != null) {
             return events.stream().map(this::toEventShortDto).toList();
         }
-        return null;
+        return new ArrayList<>();
     }
 
     public EventShortDto toEventShortDto(Event event) {
