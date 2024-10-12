@@ -45,8 +45,8 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public Compilation updateCompilation(Compilation compilation) {
         Compilation currentCompilation = getCompilation(compilation.getId());
-        if (compilation.getEvents() != null) {
-            currentCompilation.setEvents(compilation.getEvents());
+        if (compilation.getEventsId() != null) {
+            currentCompilation.setEvents(eventRepository.findAllByIdIn(compilation.getEventsId()));
         }
         if (compilation.getPinned() != null) {
             currentCompilation.setPinned(compilation.getPinned());
