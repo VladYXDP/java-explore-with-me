@@ -145,6 +145,7 @@ public class EventServiceImpl implements EventService {
                 currentEvent.setPublishedOn(LocalDateTime.now());
             } else if (stateAction.equals(REJECT_EVENT)) {
                 currentEvent.setState(State.CANCELED);
+                currentEvent.setPaid(false);
             }
         }
         String annotation = event.getAnnotation();
@@ -169,7 +170,6 @@ public class EventServiceImpl implements EventService {
         if (event.getPaid() != null) {
             currentEvent.setPaid(event.getPaid());
         }
-        //пока непонятно как здесь обрабатывать
         if (event.getParticipantLimit() != null && !event.getParticipantLimit().equals(0)) {
             currentEvent.setParticipantLimit(event.getParticipantLimit());
         }
@@ -268,7 +268,7 @@ public class EventServiceImpl implements EventService {
                                  LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, Integer from,
                                  Integer size, HttpServletRequest request) {
         if (rangeStart != null && rangeEnd != null && rangeStart.isAfter(rangeEnd)) {
-            throw new ValidationException("START can't ba after END.");
+            throw new ValidationException("Дата начала не может быть после даты окончания!");
         }
         Specification<Event> specification = Specification.where(null);
         if (text != null) {

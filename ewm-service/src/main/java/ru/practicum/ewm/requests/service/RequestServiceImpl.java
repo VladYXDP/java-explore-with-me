@@ -9,10 +9,12 @@ import ru.practicum.ewm.events.repository.EventRepository;
 import ru.practicum.ewm.exceptions.ForbiddenException;
 import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.exceptions.ValidationException;
+import ru.practicum.ewm.requests.dto.RequestDto;
 import ru.practicum.ewm.requests.dto.RequestUpdateDto;
 import ru.practicum.ewm.requests.dto.RequestResult;
 import ru.practicum.ewm.requests.entity.Request;
 import ru.practicum.ewm.requests.enums.RequestStatus;
+import ru.practicum.ewm.requests.mapper.RequestMapper;
 import ru.practicum.ewm.requests.repository.RequestRepository;
 import ru.practicum.ewm.users.entity.User;
 import ru.practicum.ewm.users.repository.UserRepository;
@@ -28,9 +30,11 @@ import static ru.practicum.ewm.requests.enums.RequestStatus.*;
 @RequiredArgsConstructor
 public class RequestServiceImpl implements RequestService {
 
+    private final RequestMapper requestMapper;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
     private final RequestRepository requestRepository;
+
 
     @Override
     public Request addRequest(Long userId, Long eventId) {
@@ -55,7 +59,7 @@ public class RequestServiceImpl implements RequestService {
         request.setEvent(event);
         request.setRequester(user);
 
-        if (event.getRequestModeration() && event.getParticipantLimit() != 0) {
+        if (!event.getRequestModeration() && event.getParticipantLimit() != 0) {
             request.setStatus(CONFIRMED);
         } else {
             request.setStatus(PENDING);
@@ -76,25 +80,26 @@ public class RequestServiceImpl implements RequestService {
         if (confirmedRequests > 0 && confirmedRequests == event.getParticipantLimit()) {
             throw new ForbiddenException("The participant limit has been reached.");
         }
-        List<Request> confirmed = new ArrayList<>();
-        List<Request> rejected = new ArrayList<>();
+        List<RequestDto> confirmed = new ArrayList<>();
+        List<RequestDto> rejected = new ArrayList<>();
         List<Request> requests = requestRepository.findAllByEventAndIdInAndStatus(event,
                 requestUpdateDto.getRequestIds(), PENDING);
         for (int i = 0; i < requests.size(); i++) {
             Request request = requests.get(i);
             if (RequestStatus.valueOf(requestUpdateDto.getStatus()).equals(REJECTED)) {
                 request.setStatus(REJECTED);
-                rejected.add(request);
+                rejected.add(requestMapper.toRequestDto(request));
             }
             if (RequestStatus.valueOf(requestUpdateDto.getStatus()).equals(CONFIRMED)
                     && event.getParticipantLimit() > 0 && confirmedRequests < event.getParticipantLimit()) {
                 request.setStatus(CONFIRMED);
-                confirmed.add(request);
+                confirmed.add(requestMapper.toRequestDto(request));
             } else {
                 request.setStatus(REJECTED);
-                rejected.add(request);
+                rejected.add(requestMapper.toRequestDto(request));
             }
         }
+        requestRepository.saveAll(requests);
         return new RequestResult(confirmed, rejected);
     }
 

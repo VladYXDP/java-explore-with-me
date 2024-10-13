@@ -18,7 +18,7 @@ public class HitDto {
     private String app;
     @Size(min = 1, max = 100)
     private String uri;
-    @Pattern(regexp = "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$")
+//    @Pattern(regexp = "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$")
     private String ip;
     @NotNull
     @Past
