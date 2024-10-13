@@ -65,7 +65,9 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Event addEvent(Long userId, Event event) {
-        checkDate(event.getEventDate());
+        if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
+            throw new ForbiddenException("Неверная дата события!");
+        }
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("Пользователь с id =" + userId + " не найден!"));
         Category category = categoriesRepository.findById(event.getCategoryId()).orElseThrow(() ->
@@ -98,7 +100,9 @@ public class EventServiceImpl implements EventService {
         }
         LocalDateTime eventDate = event.getEventDate();
         if (eventDate != null) {
-            checkDate(eventDate);
+            if (eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
+                throw new ValidationException("Неверная дата события!");
+            }
             currentEvent.setEventDate(eventDate);
         }
         if (event.getLocation() != null) {
@@ -145,7 +149,7 @@ public class EventServiceImpl implements EventService {
                 currentEvent.setPublishedOn(LocalDateTime.now());
             } else if (stateAction.equals(REJECT_EVENT)) {
                 currentEvent.setState(State.CANCELED);
-                currentEvent.setPaid(false);
+                currentEvent.setPaid(true);
             }
         }
         String annotation = event.getAnnotation();
@@ -161,7 +165,9 @@ public class EventServiceImpl implements EventService {
         }
         LocalDateTime eventDate = event.getEventDate();
         if (eventDate != null) {
-            checkDate(eventDate);
+            if (eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
+                throw new ValidationException("Неверная дата события!");
+            }
             currentEvent.setEventDate(eventDate);
         }
         if (event.getLocation() != null) {
@@ -173,9 +179,6 @@ public class EventServiceImpl implements EventService {
         if (event.getParticipantLimit() != null && !event.getParticipantLimit().equals(0)) {
             currentEvent.setParticipantLimit(event.getParticipantLimit());
         }
-//        if (event.getRequestModeration() != null) {
-//            currentEvent.setRequestModeration(event.getRequestModeration());
-//        }
         String title = event.getTitle();
         if (title != null && !title.isBlank()) {
             currentEvent.setTitle(title);
@@ -252,10 +255,6 @@ public class EventServiceImpl implements EventService {
                 if (!statsDto.isEmpty()) {
                     event.setViews(statsDto.get(0).getHits());
                 }
-//                else {
-//                    event.setConfirmedRequest(1L);
-//                    event.setViews(0L);
-//                }
                 result.add(event);
             }
             return result;
@@ -366,7 +365,7 @@ public class EventServiceImpl implements EventService {
 
     protected void checkDate(LocalDateTime eventTime) {
         if (eventTime.isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new ValidationException("Неверная дата события!");
+            throw new ForbiddenException("Неверная дата события!");
         }
     }
 
