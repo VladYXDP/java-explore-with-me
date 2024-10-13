@@ -47,9 +47,9 @@ public class ErrorHandler {
                 .build(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = {MethodArgumentNotValidException.class, ValidationException.class})
+    @ExceptionHandler(value = {ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ApiError> handleMethodArgumentNotValidException(final RuntimeException e) {
+    public ResponseEntity<ApiError> handleMethodArgumentNotValidException(final ValidationException e) {
         return new ResponseEntity<>(ApiError.builder()
                 .reason(e.getMessage())
                 .status(HttpStatus.BAD_REQUEST)
