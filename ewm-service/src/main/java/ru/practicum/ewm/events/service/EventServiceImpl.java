@@ -50,6 +50,7 @@ import static ru.practicum.ewm.requests.enums.RequestStatus.CONFIRMED;
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
 
+    private final StatsClient statsClient;
     private final ObjectMapper objectMapper;
     private final UserRepository userRepository;
     private final CategoryService categoryService;
@@ -61,9 +62,6 @@ public class EventServiceImpl implements EventService {
 
     @Value("${app}")
     private String app;
-    @Value("${server.stats.url}")
-    private String statsUrl;
-    private final StatsClient statsClient = new StatsClient(statsUrl);
 
     @Override
     public Event addEvent(Long userId, Event event) {

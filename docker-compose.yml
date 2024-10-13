@@ -3,6 +3,7 @@ services:
     build: ./stat_svc/stats-server
     image: stats-server-image
     container_name: stats-server-image
+    hostname: stats-server
     ports:
       - "9090:9090"
     depends_on:
@@ -49,7 +50,7 @@ services:
       - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
   ewm-db:
-    image: postgres:14-alpine
+    image: postgres:16.1
     container_name: postgres-ewm-db-container
     ports:
       - "6541:5432"
