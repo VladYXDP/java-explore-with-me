@@ -55,7 +55,7 @@ public class CompilationServiceImpl implements CompilationService {
         if (title != null && !title.isBlank()) {
             currentCompilation.setTitle(title);
         }
-        if(currentCompilation.getEvents() != null) {
+        if (currentCompilation.getEvents() != null) {
             List<Long> ids = currentCompilation.getEvents().stream().map(Event::getId).toList();
             Map<Long, Long> confirmedRequests = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED)
                     .stream()

@@ -1,7 +1,6 @@
 package ru.practicum.ewm.compilations.mapper;
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.sql.Update;
 import org.springframework.stereotype.Component;
 import ru.practicum.ewm.compilations.dto.CompilationDto;
 import ru.practicum.ewm.compilations.dto.CreateCompilationDto;

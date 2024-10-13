@@ -1,6 +1,5 @@
 package ru.practicum.ewm.comments.service;
 
-import ru.practicum.ewm.comments.dto.CreateCommentDto;
 import ru.practicum.ewm.comments.entity.Comment;
 
 import java.util.List;

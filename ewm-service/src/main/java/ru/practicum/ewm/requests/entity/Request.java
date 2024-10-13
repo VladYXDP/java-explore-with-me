@@ -1,7 +1,10 @@
 package ru.practicum.ewm.requests.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import ru.practicum.ewm.events.entity.Event;
 import ru.practicum.ewm.requests.enums.RequestStatus;
 import ru.practicum.ewm.users.entity.User;

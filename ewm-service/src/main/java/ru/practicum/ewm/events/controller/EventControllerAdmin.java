@@ -6,7 +6,6 @@ import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.events.dto.CreateEventDto;
 import ru.practicum.ewm.events.dto.EventFullDto;
 import ru.practicum.ewm.events.dto.UpdateEventAdminDto;
 import ru.practicum.ewm.events.mapper.EventMapper;
@@ -34,13 +33,13 @@ public class EventControllerAdmin {
                                                      @RequestParam(required = false) List<String> states,
                                                      @RequestParam(required = false) List<Long> categories,
                                                      @RequestParam(required = false) @DateTimeFormat(pattern =
-                                                                      "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
+                                                             "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
                                                      @RequestParam(required = false) @DateTimeFormat(pattern =
-                                                                      "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
+                                                             "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
                                                      @RequestParam(value = "from", defaultValue = "0")
-                                                              @PositiveOrZero Integer from,
+                                                     @PositiveOrZero Integer from,
                                                      @RequestParam(value = "size", defaultValue = "10")
-                                                              @Positive Integer size) {
+                                                     @Positive Integer size) {
         return eventMapper.toEventDto(eventService.getEventsByAdminParams(users, states, categories, rangeStart, rangeEnd, from, size));
     }
 }

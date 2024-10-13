@@ -1,14 +1,10 @@
 package ru.practicum.ewm.events.mapper;
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.sql.Update;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.events.EventTarget;
 import ru.practicum.ewm.categories.mapper.CategoryMapper;
 import ru.practicum.ewm.events.dto.*;
 import ru.practicum.ewm.events.entity.Event;
-import ru.practicum.ewm.events.enums.State;
-import ru.practicum.ewm.events.enums.StateActionAdmin;
 import ru.practicum.ewm.events.enums.StateActionPrivate;
 import ru.practicum.ewm.location.LocationMapper;
 import ru.practicum.ewm.users.mapper.UserMapper;
