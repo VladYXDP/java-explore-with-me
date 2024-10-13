@@ -1,9 +1,7 @@
 package ru.practicum.stat_svc;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,27 +11,29 @@ import java.util.List;
 
 public class StatsClient {
 
-    @Value("${server.url}")
-    private final String serverUrl = "http://localhost:9090/";
+    private final String serverUrl;
     private final RestTemplate rest;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public StatsClient() {
+    public StatsClient(String serverUrl) {
+        this.serverUrl = serverUrl;
         this.rest = new RestTemplate();
     }
 
-    public ResponseEntity<Object> saveHit(HitDto hit) {
+    public void saveHit(HitDto hit) {
         ResponseEntity<Object> response;
         try {
             response = rest.postForEntity(serverUrl + "/hit", hit, Object.class);
         } catch (HttpStatusCodeException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
+            ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
+            return;
         }
         ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(response.getStatusCode());
         if (response.hasBody()) {
-            return responseBuilder.body(response.getBody());
+            responseBuilder.body(response.getBody());
+            return;
         }
-        return responseBuilder.build();
+        responseBuilder.build();
     }
 
     public ResponseEntity<Object> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {

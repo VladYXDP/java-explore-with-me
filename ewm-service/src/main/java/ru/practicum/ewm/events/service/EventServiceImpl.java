@@ -58,10 +58,12 @@ public class EventServiceImpl implements EventService {
     private final LocationRepository locationRepository;
     private final CategoriesRepository categoriesRepository;
 
-    private StatsClient statsClient = new StatsClient();
 
     @Value("${app}")
     private String app;
+    @Value("${server.stats.url}")
+    private String statsUrl;
+    private final StatsClient statsClient = new StatsClient(statsUrl);
 
     @Override
     public Event addEvent(Long userId, Event event) {
