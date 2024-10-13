@@ -1,7 +1,7 @@
 package ru.practicum.ewm.requests.service;
 
-import ru.practicum.ewm.requests.dto.RequestUpdateDto;
 import ru.practicum.ewm.requests.dto.RequestResult;
+import ru.practicum.ewm.requests.dto.RequestUpdateDto;
 import ru.practicum.ewm.requests.entity.Request;
 
 import java.util.List;

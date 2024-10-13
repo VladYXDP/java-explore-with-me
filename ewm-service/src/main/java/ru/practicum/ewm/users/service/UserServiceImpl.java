@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
 
     private void checkEmailWhenCreate(String email) {
         if (userRepository.existsByEmail(email)) {
-            throw new AlreadyExistException("Ошибка добавления пользователя с email = " + email +"!");
+            throw new AlreadyExistException("Ошибка добавления пользователя с email = " + email + "!");
         }
     }
 }

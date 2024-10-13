@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 import ru.practicum.ewm.categories.entity.Category;
 import ru.practicum.ewm.categories.repository.CategoriesRepository;
 import ru.practicum.ewm.events.repository.EventRepository;
+import ru.practicum.ewm.exceptions.AlreadyExistException;
 import ru.practicum.ewm.exceptions.ForbiddenException;
 import ru.practicum.ewm.exceptions.NotFoundException;
-import ru.practicum.ewm.exceptions.AlreadyExistException;
 
 import java.util.List;
 import java.util.Optional;

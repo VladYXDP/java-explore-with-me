@@ -327,7 +327,7 @@ public class EventServiceImpl implements EventService {
             Map<Long, Long> confirmedRequests = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED)
                     .stream()
                     .collect(Collectors.toMap(Request::getCount, Request::getEventId));
-        List<ViewStats> statsDto = objectMapper.convertValue(response.getBody(), new TypeReference<>() {
+            List<ViewStats> statsDto = objectMapper.convertValue(response.getBody(), new TypeReference<>() {
             });
             for (Event event : events) {
                 if (!statsDto.isEmpty()) {

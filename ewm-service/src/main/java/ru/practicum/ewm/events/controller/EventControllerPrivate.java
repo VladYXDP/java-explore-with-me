@@ -35,7 +35,7 @@ public class EventControllerPrivate {
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     public EventFullDto addEvent(@PathVariable Long userId, @RequestBody @Valid CreateEventDto createEventDto) {
-            return eventMapper.toEventDto(eventService.addEvent(userId, eventMapper.toEvent(createEventDto)));
+        return eventMapper.toEventDto(eventService.addEvent(userId, eventMapper.toEvent(createEventDto)));
     }
 
     @PatchMapping("/{eventId}")
