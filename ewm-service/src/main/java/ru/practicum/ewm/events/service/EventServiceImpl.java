@@ -108,9 +108,6 @@ public class EventServiceImpl implements EventService {
         if (event.getLocation() != null) {
             currentEvent.setLocation(checkLocation(event.getLocation()));
         }
-        if (event.getPaid() != null) {
-            currentEvent.setPaid(event.getPaid());
-        }
         if (event.getParticipantLimit() != null) {
             currentEvent.setParticipantLimit(event.getParticipantLimit());
         }
@@ -149,7 +146,6 @@ public class EventServiceImpl implements EventService {
                 currentEvent.setPublishedOn(LocalDateTime.now());
             } else if (stateAction.equals(REJECT_EVENT)) {
                 currentEvent.setState(State.CANCELED);
-                currentEvent.setPaid(true);
             }
         }
         String annotation = event.getAnnotation();
