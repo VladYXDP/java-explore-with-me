@@ -146,6 +146,7 @@ public class EventServiceImpl implements EventService {
                 currentEvent.setPublishedOn(LocalDateTime.now());
             } else if (stateAction.equals(REJECT_EVENT)) {
                 currentEvent.setState(State.CANCELED);
+                currentEvent.setPaid(false);
             }
         }
         String annotation = event.getAnnotation();
