@@ -190,7 +190,7 @@ public class EventServiceImpl implements EventService {
         List<Long> ids = events.stream().map(Event::getId).collect(Collectors.toList());
         Map<Long, Long> confirmedRequests = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED)
                 .stream()
-                .collect(Collectors.toMap(Request::getCount, Request::getEventId));
+                .collect(Collectors.toMap(Request::getEventId, Request::getCount));
         return events.stream()
                 .peek(event -> event.setConfirmedRequest(confirmedRequests.getOrDefault(event.getId(), 0L)))
                 .collect(Collectors.toList());
@@ -243,7 +243,6 @@ public class EventServiceImpl implements EventService {
             List<ViewStats> statsDto = objectMapper.convertValue(response.getBody(), new TypeReference<>() {
             });
             List<Long> ids = events.stream().map(Event::getId).collect(Collectors.toList());
-            List<Request> rq = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED);
             Map<Long, Long> confirmedRequests = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED).stream()
                     .collect(Collectors.toMap(Request::getEventId, Request::getCount));
             for (Event event : events) {
@@ -322,7 +321,7 @@ public class EventServiceImpl implements EventService {
             List<Long> ids = events.stream().map(Event::getId).collect(Collectors.toList());
             Map<Long, Long> confirmedRequests = requestRepository.findAllByEventIdInAndStatus(ids, CONFIRMED)
                     .stream()
-                    .collect(Collectors.toMap(Request::getCount, Request::getEventId));
+                    .collect(Collectors.toMap(Request::getEventId, Request::getCount));
             List<ViewStats> statsDto = objectMapper.convertValue(response.getBody(), new TypeReference<>() {
             });
             for (Event event : events) {
@@ -360,12 +359,6 @@ public class EventServiceImpl implements EventService {
                 LocalDateTime.now());
         statsClient.saveHit(hit);
         return event;
-    }
-
-    protected void checkDate(LocalDateTime eventTime) {
-        if (eventTime.isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new ForbiddenException("Неверная дата события!");
-        }
     }
 
     private Event getEvent(Long eventId) {
