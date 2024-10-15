@@ -307,6 +307,9 @@ public class EventServiceImpl implements EventService {
         }
         List<Event> events = eventRepository.findAll(specification, pageRequest).getContent();
         if (events.isEmpty()) {
+            HitDto hit = new HitDto(app, request.getRequestURI(), request.getRemoteAddr(),
+                    LocalDateTime.now());
+            statsClient.saveHit(hit);
             return events;
         } else {
             List<String> uris = events.stream()
