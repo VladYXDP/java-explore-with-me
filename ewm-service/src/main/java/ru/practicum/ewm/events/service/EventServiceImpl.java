@@ -37,8 +37,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static ru.practicum.ewm.events.enums.State.PENDING;
-import static ru.practicum.ewm.events.enums.State.PUBLISHED;
+import static ru.practicum.ewm.events.enums.State.*;
 import static ru.practicum.ewm.events.enums.StateActionAdmin.PUBLISH_EVENT;
 import static ru.practicum.ewm.events.enums.StateActionAdmin.REJECT_EVENT;
 import static ru.practicum.ewm.events.enums.StateActionPrivate.CANCEL_REVIEW;
@@ -170,9 +169,9 @@ public class EventServiceImpl implements EventService {
         if (event.getLocation() != null) {
             currentEvent.setLocation(checkLocation(event.getLocation()));
         }
-//        if (event.getPaid() != null) {
-//            currentEvent.setPaid(event.getPaid());
-//        }
+        if (event.getPaid() != null && !currentEvent.getState().equals(CANCELED)) {
+            currentEvent.setPaid(event.getPaid());
+        }
         if (event.getParticipantLimit() != null && !event.getParticipantLimit().equals(0)) {
             currentEvent.setParticipantLimit(event.getParticipantLimit());
         }
