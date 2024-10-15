@@ -76,6 +76,7 @@ public class EventServiceImpl implements EventService {
         event.setInitiator(user);
         event.setCategory(category);
         event.setLocation(location);
+        event.setPaid(event.getPaid());
         event.setCreatedOn(LocalDateTime.now());
         event.setState(PENDING);
         return eventRepository.save(event);
@@ -136,17 +137,16 @@ public class EventServiceImpl implements EventService {
         if (event.getStateAction() != null) {
             StateActionAdmin stateAction = StateActionAdmin.valueOf(event.getStateAction());
             if (!currentEvent.getState().equals(PENDING) && stateAction.equals(PUBLISH_EVENT)) {
-                throw new ForbiddenException("Event can't be published because it's not pending");
+                throw new ForbiddenException("Событие не может быть опубликовано без статуса pending!");
             }
             if (currentEvent.getState().equals(PUBLISHED) && stateAction.equals(REJECT_EVENT)) {
-                throw new ForbiddenException("Event can't be rejected because it's already published.");
+                throw new ForbiddenException("Опубликованное событие нельзя отменить!");
             }
             if (stateAction.equals(PUBLISH_EVENT)) {
                 currentEvent.setState(PUBLISHED);
                 currentEvent.setPublishedOn(LocalDateTime.now());
             } else if (stateAction.equals(REJECT_EVENT)) {
                 currentEvent.setState(State.CANCELED);
-                currentEvent.setPaid(false);
             }
         }
         String annotation = event.getAnnotation();
@@ -170,9 +170,9 @@ public class EventServiceImpl implements EventService {
         if (event.getLocation() != null) {
             currentEvent.setLocation(checkLocation(event.getLocation()));
         }
-        if (event.getPaid() != null) {
-            currentEvent.setPaid(event.getPaid());
-        }
+//        if (event.getPaid() != null) {
+//            currentEvent.setPaid(event.getPaid());
+//        }
         if (event.getParticipantLimit() != null && !event.getParticipantLimit().equals(0)) {
             currentEvent.setParticipantLimit(event.getParticipantLimit());
         }
