@@ -1,5 +1,6 @@
 package ru.practicum.ewm.comments.controller;
 
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +15,7 @@ public class CommentControllerAdmin {
 
     @DeleteMapping("/{commentId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void deleteComment(@PathVariable Long commentId) {
+    public void deleteComment(@PathVariable @Positive Long commentId) {
         commentService.deleteComment(commentId);
     }
 }

@@ -1,10 +1,7 @@
 package ru.practicum.ewm.comments.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ru.practicum.ewm.events.entity.Event;
 import ru.practicum.ewm.users.entity.User;
 
@@ -14,6 +11,7 @@ import java.time.LocalDateTime;
 @Table(name = "comments")
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Comment {
@@ -22,7 +20,7 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 300)
     private String text;
 
     @ManyToOne
@@ -37,8 +35,4 @@ public class Comment {
     private LocalDateTime created;
 
     private LocalDateTime edited;
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 }

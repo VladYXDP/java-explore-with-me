@@ -18,11 +18,11 @@ public class CommentMapper {
     private final UserMapper userMapper;
     private final EventMapper eventMapper;
 
-    public Comment toComment(CreateCommentDto createCommentDto) {
-        Comment comment = new Comment();
-        comment.setText(createCommentDto.getText());
-        comment.setCreated(LocalDateTime.now());
-        return comment;
+    public Comment toComment(CreateCommentDto dto) {
+        return Comment.builder()
+                .text(dto.getText())
+                .created(LocalDateTime.now())
+                .build();
     }
 
     public List<CommentDto> toCommentDto(List<Comment> comments) {
@@ -30,13 +30,13 @@ public class CommentMapper {
     }
 
     public CommentDto toCommentDto(Comment comment) {
-        return new CommentDto(
-                comment.getId(),
-                comment.getText(),
-                userMapper.toUserShortDto(comment.getAuthor()),
-                eventMapper.toEventShortDto(comment.getEvent()),
-                comment.getCreated(),
-                comment.getEdited()
-        );
+        return CommentDto.builder()
+                .id(comment.getId())
+                .text(comment.getText())
+                .edited(comment.getEdited())
+                .created(comment.getCreated())
+                .author(userMapper.toUserShortDto(comment.getAuthor()))
+                .event(eventMapper.toEventShortDto(comment.getEvent()))
+                .build();
     }
 }

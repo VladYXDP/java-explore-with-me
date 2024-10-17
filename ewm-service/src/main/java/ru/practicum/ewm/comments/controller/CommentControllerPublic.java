@@ -15,18 +15,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentControllerPublic {
 
-    private final CommentService commentService;
     private final CommentMapper commentMapper;
+    private final CommentService commentService;
 
     @GetMapping("/event/{eventId}")
-    List<CommentDto> getComments(@PathVariable Long eventId,
+    List<CommentDto> getComments(@PathVariable @Positive Long eventId,
                                  @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
                                  @RequestParam(value = "size", defaultValue = "10") @Positive Integer size) {
         return commentMapper.toCommentDto(commentService.getComments(eventId, from, size));
     }
 
     @GetMapping("/{commentId}")
-    CommentDto getCommentById(@PathVariable Long commentId) {
+    CommentDto getCommentById(@PathVariable @Positive Long commentId) {
         return commentMapper.toCommentDto(commentService.getCommentById(commentId));
     }
 }

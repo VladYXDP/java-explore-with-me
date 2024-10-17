@@ -18,27 +18,27 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentControllerPrivate {
 
-    private final CommentService commentService;
     private final CommentMapper commentMapper;
+    private final CommentService commentService;
 
     @PostMapping("/{eventId}")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public CommentDto addComment(@PathVariable Long userId,
-                                 @PathVariable Long eventId,
+    public CommentDto addComment(@PathVariable @Positive Long userId,
+                                 @PathVariable @Positive Long eventId,
                                  @RequestBody @Valid CreateCommentDto createCommentDto) {
         return commentMapper.toCommentDto(commentService.addComment(userId, eventId, commentMapper.toComment(createCommentDto)));
     }
 
     @PatchMapping("/{eventId}/{commentId}")
-    public CommentDto updateComment(@PathVariable Long userId,
-                                    @PathVariable Long eventId,
-                                    @PathVariable Long commentId,
+    public CommentDto updateComment(@PathVariable @Positive Long userId,
+                                    @PathVariable @Positive Long eventId,
+                                    @PathVariable @Positive Long commentId,
                                     @RequestBody @Valid CreateCommentDto createCommentDto) {
         return commentMapper.toCommentDto(commentService.updateComment(userId, eventId, commentId, commentMapper.toComment(createCommentDto)));
     }
 
     @GetMapping
-    List<CommentDto> getCommentsByAuthor(@PathVariable Long userId,
+    List<CommentDto> getCommentsByAuthor(@PathVariable @Positive Long userId,
                                          @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero Integer from,
                                          @RequestParam(value = "size", defaultValue = "10") @Positive Integer size) {
         return commentMapper.toCommentDto(commentService.getCommentsByAuthor(userId, from, size));
@@ -46,8 +46,8 @@ public class CommentControllerPrivate {
 
     @DeleteMapping("/{commentId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void deleteComment(@PathVariable Long userId,
-                              @PathVariable Long commentId) {
+    public void deleteComment(@PathVariable @Positive Long userId,
+                              @PathVariable @Positive Long commentId) {
         commentService.deleteComment(userId, commentId);
     }
 }
