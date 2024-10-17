@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.stat_svc.HitDto;
 import ru.practicum.stat_svc.ViewStats;
+import ru.practicum.stat_svc.exception.NotFoundException;
 import ru.practicum.stat_svc.mapping.HitDtoMapping;
 import ru.practicum.stat_svc.service.StatsService;
 
@@ -31,6 +32,9 @@ public class StatsController {
                                  @RequestParam(value = "end", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                  @RequestParam(value = "uris", required = false) List<String> uris,
                                  @RequestParam(value = "unique", required = false, defaultValue = "false") Boolean unique) {
+        if (start == null || end == null || start.isAfter(end)) {
+            throw new NotFoundException("Некорректное заполнение временного диапазона!");
+        }
         return statService.getStats(start, end, uris, unique);
     }
 }

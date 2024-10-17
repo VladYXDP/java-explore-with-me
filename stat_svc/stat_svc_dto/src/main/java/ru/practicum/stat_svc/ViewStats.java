@@ -1,6 +1,7 @@
 package ru.practicum.stat_svc;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @Getter
 @AllArgsConstructor

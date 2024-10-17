@@ -40,6 +40,7 @@ services:
       - ewm-db
     environment:
       - CLIENT_URL=http://stats-server:9090
+      - SERVER_PORT=8080
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/explore-with-me
       - SPRING_DATASOURCE_USER=vlad
       - SPRING_DATASOURCE_PASSWORD=12345
@@ -48,7 +49,7 @@ services:
       - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
   ewm-db:
-    image: postgres:14-alpine
+    image: postgres:16.1
     container_name: postgres-ewm-db-container
     ports:
       - "6541:5432"

@@ -23,16 +23,20 @@ public class StatsService {
 
     @Transactional(readOnly = true)
     public List<ViewStats> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
+        List<ViewStats> result;
         if (unique) {
             if (uris != null) {
-                return statsRepository.findHitsWithUniqueIpWithUris(uris, start, end);
+                result = statsRepository.findHitsWithUniqueIpWithUris(uris, start, end);
+            } else {
+                result = statsRepository.findHitsWithUniqueIpWithoutUris(start, end);
             }
-            return statsRepository.findHitsWithUniqueIpWithoutUris(start, end);
         } else {
             if (uris != null) {
-                return statsRepository.findAllHitsWithUris(uris, start, end);
+                result = statsRepository.findAllHitsWithUris(uris, start, end);
+            } else {
+                result = statsRepository.findAllHitsWithoutUris(start, end);
             }
-            return statsRepository.findAllHitsWithoutUris(start, end);
         }
+        return result;
     }
 }

@@ -1,71 +1,61 @@
 package ru.practicum.stat_svc;
 
-import org.springframework.http.*;
-import org.springframework.lang.Nullable;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
 
 public class StatsClient {
 
-    private final RestTemplate restTemplate;
-    private final String baseUrl;
+    private final String serverUrl;
+    private final RestTemplate rest;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public StatsClient(RestTemplate restTemplate, String baseUrl) {
-        this.restTemplate = restTemplate;
-        this.baseUrl = baseUrl;
+    public StatsClient(String serverUrl) {
+        this.serverUrl = serverUrl;
+        this.rest = new RestTemplate();
     }
 
-    public ResponseEntity<Object> post(String path, String app, String uri, String ip) {
-        HitDto hitDto = new HitDto(app, uri, ip, LocalDateTime.now());
-        return makeAndSendRequest(HttpMethod.POST, baseUrl + path, null, hitDto);
-    }
-
-    public ResponseEntity<Object> get(String path, String start, String end, String uris, boolean unique) {
-        Map<String, Object> params = Map.of("start", start, "end", end, "uris", uris, "unique", unique);
-        return makeAndSendRequest(HttpMethod.GET, baseUrl + path, params, null);
-    }
-
-    private <T> ResponseEntity<Object> makeAndSendRequest(HttpMethod method, String path, @Nullable Map<String, Object> parameters, @Nullable T body) {
-        HttpEntity<T> requestEntity = new HttpEntity<>(body, defaultHeaders(null));
-
-        ResponseEntity<Object> shareitServerResponse;
+    public void saveHit(HitDto hit) {
+        ResponseEntity<Object> response;
         try {
-            if (parameters != null) {
-                shareitServerResponse = restTemplate.exchange(path, method, requestEntity, Object.class, parameters);
-            } else {
-                shareitServerResponse = restTemplate.exchange(path, method, requestEntity, Object.class);
-            }
+            response = rest.postForEntity(serverUrl + "/hit", hit, Object.class);
+        } catch (HttpStatusCodeException e) {
+            ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
+            return;
+        }
+        ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(response.getStatusCode());
+        if (response.hasBody()) {
+            responseBuilder.body(response.getBody());
+            return;
+        }
+        responseBuilder.build();
+    }
+
+    public ResponseEntity<Object> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+        StringBuilder url = new StringBuilder(serverUrl + "/stats?");
+        url.append("&uris=");
+        for (String uri : uris) {
+            url.append(uri);
+        }
+        url.append("&unique=").append(unique);
+        url.append("&start=").append(start.format(formatter));
+        url.append("&end=").append(end.format(formatter));
+
+        ResponseEntity<Object> response;
+        try {
+            response = rest.exchange(url.toString(), HttpMethod.GET, null, Object.class);
         } catch (HttpStatusCodeException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
         }
-        return prepareGatewayResponse(shareitServerResponse);
-    }
-
-    private HttpHeaders defaultHeaders(Long userId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
-        if (userId != null) {
-            headers.set("X-Sharer-User-Id", String.valueOf(userId));
-        }
-        return headers;
-    }
-
-    private static ResponseEntity<Object> prepareGatewayResponse(ResponseEntity<Object> response) {
-        if (response.getStatusCode().is2xxSuccessful()) {
-            return response;
-        }
-
         ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(response.getStatusCode());
-
         if (response.hasBody()) {
             return responseBuilder.body(response.getBody());
         }
-
         return responseBuilder.build();
     }
 }
