@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.comments.entity.Comment;
 import ru.practicum.ewm.comments.repository.CommentRepository;
 import ru.practicum.ewm.events.entity.Event;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
@@ -47,6 +49,7 @@ public class CommentServiceImpl implements CommentService {
         return currentComment;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Comment> getCommentsByAuthor(Long userId, Integer from, Integer size) {
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь " + userId + " не найден!"));
@@ -54,6 +57,7 @@ public class CommentServiceImpl implements CommentService {
         return commentRepository.findAllByAuthorId(userId, pageRequest);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Comment> getComments(Long eventId, Integer from, Integer size) {
         eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Событие " + eventId + " не найдено!"));
@@ -61,6 +65,7 @@ public class CommentServiceImpl implements CommentService {
         return commentRepository.findAllByEventId(eventId, pageRequest);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Comment getCommentById(Long commentId) {
         return commentRepository.findById(commentId).orElseThrow(() -> new NotFoundException("Комментарий " + commentId + " не найден!"));
