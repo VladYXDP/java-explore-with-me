@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import ru.practicum.ewm.categories.entity.Category;
 import ru.practicum.ewm.events.entity.Event;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
