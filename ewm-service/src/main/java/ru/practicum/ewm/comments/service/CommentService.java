@@ -8,7 +8,7 @@ public interface CommentService {
 
     Comment addComment(Long userId, Long eventId, Comment comment);
 
-    Comment updateComment(Long userId, Long eventId, Long commentId, Comment comment);
+    Comment updateComment(Long userId, Long commentId, Comment comment);
 
     List<Comment> getCommentsByAuthor(Long userId, Integer from, Integer size);
 

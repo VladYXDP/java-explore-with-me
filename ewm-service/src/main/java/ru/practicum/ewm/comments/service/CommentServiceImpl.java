@@ -35,9 +35,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment updateComment(Long userId, Long eventId, Long commentId, Comment comment) {
+    public Comment updateComment(Long userId, Long commentId, Comment comment) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь " + userId + " не найден!"));
-        eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Событие " + eventId + " не найдено!"));
         Comment currentComment = commentRepository.findById(commentId).orElseThrow(() -> new NotFoundException("Комментарий " + commentId + " не найден!"));
         if (currentComment.getAuthor().equals(user)) {
             currentComment.setText(comment.getText());
