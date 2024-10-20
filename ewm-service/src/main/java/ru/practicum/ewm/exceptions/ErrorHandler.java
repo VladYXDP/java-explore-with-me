@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import ru.practicum.ewm.categories.controller.CategoryControllerAdmin;
 import ru.practicum.ewm.categories.controller.CategoryControllerPublic;
+import ru.practicum.ewm.comments.controller.CommentControllerAdmin;
+import ru.practicum.ewm.comments.controller.CommentControllerPrivate;
 import ru.practicum.ewm.compilations.controller.CompilationControllerAdmin;
 import ru.practicum.ewm.compilations.controller.CompilationControllerPublic;
 import ru.practicum.ewm.events.controller.EventControllerAdmin;
@@ -32,6 +34,9 @@ import java.util.Arrays;
         CategoryControllerPublic.class,
         CompilationControllerAdmin.class,
         CompilationControllerPublic.class,
+        CommentControllerAdmin.class,
+        CommentControllerPrivate.class,
+        CompilationControllerPublic.class
 })
 public class ErrorHandler {
 
