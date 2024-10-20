@@ -42,7 +42,6 @@ public class CommentServiceImpl implements CommentService {
         Comment currentComment = commentRepository.findById(commentId).orElseThrow(() -> new NotFoundException("Комментарий " + commentId + " не найден!"));
         if (currentComment.getAuthor().equals(user)) {
             currentComment.setText(comment.getText());
-            currentComment.setEdited(LocalDateTime.now());
         } else {
             throw new ForbiddenException("Пользователь " + user.getId() + " не может обновить комментарий!");
         }

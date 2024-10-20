@@ -21,7 +21,15 @@ public class CommentMapper {
     public Comment toComment(CreateCommentDto dto) {
         return Comment.builder()
                 .text(dto.getText())
+                .edited(LocalDateTime.now())
                 .created(LocalDateTime.now())
+                .build();
+    }
+
+    public Comment toUpdateComment(CreateCommentDto dto) {
+        return Comment.builder()
+                .text(dto.getText())
+                .edited(LocalDateTime.now())
                 .build();
     }
 

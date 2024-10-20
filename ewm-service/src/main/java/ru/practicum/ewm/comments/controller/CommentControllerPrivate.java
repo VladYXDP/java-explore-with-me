@@ -25,16 +25,16 @@ public class CommentControllerPrivate {
     @ResponseStatus(value = HttpStatus.CREATED)
     public CommentDto addComment(@PathVariable @Positive Long userId,
                                  @PathVariable @Positive Long eventId,
-                                 @RequestBody @Valid CreateCommentDto createCommentDto) {
-        return commentMapper.toCommentDto(commentService.addComment(userId, eventId, commentMapper.toComment(createCommentDto)));
+                                 @RequestBody @Valid CreateCommentDto dto) {
+        return commentMapper.toCommentDto(commentService.addComment(userId, eventId, commentMapper.toComment(dto)));
     }
 
     @PatchMapping("/{eventId}/{commentId}")
     public CommentDto updateComment(@PathVariable @Positive Long userId,
                                     @PathVariable @Positive Long eventId,
                                     @PathVariable @Positive Long commentId,
-                                    @RequestBody @Valid CreateCommentDto createCommentDto) {
-        return commentMapper.toCommentDto(commentService.updateComment(userId, eventId, commentId, commentMapper.toComment(createCommentDto)));
+                                    @RequestBody @Valid CreateCommentDto dto) {
+        return commentMapper.toCommentDto(commentService.updateComment(userId, eventId, commentId, commentMapper.toUpdateComment(dto)));
     }
 
     @GetMapping
