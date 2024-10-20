@@ -14,7 +14,6 @@ import ru.practicum.ewm.exceptions.NotFoundException;
 import ru.practicum.ewm.users.entity.User;
 import ru.practicum.ewm.users.repository.UserRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -42,10 +41,11 @@ public class CommentServiceImpl implements CommentService {
         Comment currentComment = commentRepository.findById(commentId).orElseThrow(() -> new NotFoundException("Комментарий " + commentId + " не найден!"));
         if (currentComment.getAuthor().equals(user)) {
             currentComment.setText(comment.getText());
+            currentComment.setEdited(comment.getEdited());
         } else {
             throw new ForbiddenException("Пользователь " + user.getId() + " не может обновить комментарий!");
         }
-        return currentComment;
+        return commentRepository.save(currentComment);
     }
 
     @Transactional(readOnly = true)
