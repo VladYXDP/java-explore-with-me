@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateCommentDto {
-    @Size(max = 3000)
     @NotBlank
+    @Size(max = 3000)
     private String text;
 }
